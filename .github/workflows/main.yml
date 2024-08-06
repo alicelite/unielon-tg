@@ -1,8 +1,6 @@
-# 将静态内容部署到 GitHub Pages 的简单工作流
-name: 将静态内容部署到页面
+name: Deploy to GitHub Pages
 
 on:
-  # 针对默认分支的推送上运行
   push:
     branches: ['gh-pages']
 
