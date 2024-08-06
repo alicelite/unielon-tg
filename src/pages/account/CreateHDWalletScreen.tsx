@@ -1,27 +1,19 @@
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { KeyboardEvent, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import * as bip39 from 'bip39';
-import { generateAddress, generateChild, generateRoot } from '@/ui/utils/wallet';
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
-import { AddressType, RestoreWalletType } from '@/shared/types';
-import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
-import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
-import { Icon } from '@/ui/components/Icon';
-import { TabBar } from '@/ui/components/TabBar';
+import { AddressType, RestoreWalletType } from '../../shared/types';
+import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text, Icon, TabBar } from '@/components';
+import { useTools } from '@/components/ActionComponent';
+import { AddressTypeCard } from '@/components/AddressTypeCard';
+import { FooterButtonContainer } from '@/components/FooterButtonContainer';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSaothis, copyToClipboard, useWallet } from '@/ui/utils';
+import { copyToClipboard } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-
 import { useNavigate } from "react-router-dom"
-import wallet from '@/background/controller/wallet';
-
 
 function Step0({
-  contextData,
   updateContextData
 }: {
   contextData: ContextData;
@@ -30,25 +22,20 @@ function Step0({
   return (
     <Column gap="lg">
       <Text text="Choose a wallet you want to restore from" preset="title-bold" textCenter mt="xl" />
-      {RESTORE_WALLETS.map((item, index) => {
-        return (
-          <Button
-            key={index}
-            preset="default"
-            onClick={() => {
-              updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
-            }}
-          >
-            <Text text={item.name} />
-          </Button>
-        );
-      })}
+      {RESTORE_WALLETS.map(({ name, value }: { name: string; value: string }, index: any) => (
+        <Button
+          key={index}
+          preset="default"
+          onClick={() => updateContextData({ tabType: TabType.STEP2, restoreWalletType: value as unknown as RestoreWalletType })}
+        >
+          <Text text={name} />
+        </Button>
+      ))}
     </Column>
   );
 }
 
 function Step1_Create({
-  contextData,
   updateContextData
 }: {
   contextData: ContextData;
@@ -56,8 +43,8 @@ function Step1_Create({
 }) {
   const [checked, setChecked] = useState(false);
   const tools = useTools();
-  const [mnemonicWords, setMnemonicWords] = useState()
-  const [normalMnemonic, setNormalMnemonic] = useState()
+  const [mnemonicWords, setMnemonicWords] = useState<string[]>([])
+  const [normalMnemonic, setNormalMnemonic] = useState('')
   const onChange = (e: CheckboxChangeEvent) => {
     const val = e.target.checked;
     setChecked(val);
@@ -101,7 +88,7 @@ function Step1_Create({
 
       <Row
         justifyCenter
-        onClick={(e) => {
+        onClick={() => {
           copy(normalMnemonic);
         }}
       >
@@ -138,18 +125,16 @@ function Step1_Create({
 }
 
 function Step1_Import({
-  contextData,
   updateContextData
 }: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const [keys, setKeys] = useState<Array<string>>(new Array(12).fill(''));
-  const [curInputIndex, setCurInputIndex] = useState(0);
-  const [hover, setHover] = useState(999);
+  const [curInputIndex] = useState(0);
   const [disabled, setDisabled] = useState(true);
 
-  const handleEventPaste = (event, index: number) => {
+  const handleEventPaste = (event: { clipboardData: { getData: (arg0: string) => any; }; preventDefault: () => void; }, index: number) => {
     const copyText = event.clipboardData?.getData('text/plain');
     const textArr = copyText.trim().split(' ');
     const newKeys = [...keys];
@@ -191,9 +176,6 @@ function Step1_Import({
     setDisabled(false);
   }, [keys]);
 
-  useEffect(() => {
-    //todo
-  }, [hover]);
 
   const onNext = () => {
     const mnemonics = keys.join(' ');
@@ -220,10 +202,10 @@ function Step1_Import({
                     containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
                     style={{ width: 80 }}
                     value={_}
-                    onPaste={(e) => {
+                    onPaste={(e: { clipboardData: { getData: (arg0: string) => any; }; preventDefault: () => void; }) => {
                       handleEventPaste(e, index);
                     }}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                       onChange(e, index);
                     }}
                     // onMouseOverCapture={(e) => {
@@ -232,13 +214,7 @@ function Step1_Import({
                     // onMouseLeave={(e) => {
                     //   setHover(999);
                     // }}
-                    onFocus={(e) => {
-                      setCurInputIndex(index);
-                    }}
-                    onBlur={(e) => {
-                      setCurInputIndex(999);
-                    }}
-                    onKeyUp={(e) => handleOnKeyUp(e)}
+                    onKeyUp={(e: KeyboardEvent<HTMLInputElement>) => handleOnKeyUp(e)}
                     autoFocus={index == curInputIndex}
                   />
                 </Card>
@@ -275,7 +251,7 @@ function Step2({
   const hdPathOptions = useMemo(() => {
     console.log(contextData, 'contextData======<<<<')
     const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
-    return ADDRESS_TYPES.filter((v) => {
+    return ADDRESS_TYPES.filter((v: { displayIndex: number; value: any; }) => {
       if (v.displayIndex < 0) {
         return false;
       }
@@ -293,8 +269,8 @@ function Step2({
 
       return true;
     })
-      .sort((a, b) => a.displayIndex - b.displayIndex)
-      .map((v) => {
+      .sort((a: { displayIndex: number; }, b: { displayIndex: number; }) => a.displayIndex - b.displayIndex)
+      .map((v: { name: any; hdPath: any; value: any; isUnielonLegacy: any; }) => {
         return {
           label: v.name,
           hdPath: v.hdPath,
@@ -304,14 +280,14 @@ function Step2({
       });
   }, [contextData]);
 
-  const [previewAddresses, setPreviewAddresses] = useState<any[]>(hdPathOptions.map((v) => ''));
+  const [previewAddresses] = useState<any[]>(hdPathOptions.map(() => ''));
 
-  const [addressAssets, setAddressAssets] = useState<{
+  const [addressAssets] = useState<{
     [key: string]: { total_doge: string; satoshis: number; total_inscription: number };
   }>({});
 
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const navigate = useNavigate();
   const [hdPathOptionsList, sethdPathOptionsList] = useState<any[]>()
@@ -340,8 +316,8 @@ function Step2({
 
   const onNext = async () => {
     try {
-      const option = hdPathOptions[contextData.addressTypeIndex];
-      const hdPath = contextData.customHdPath || option.hdPath;
+      // const option = hdPathOptions[contextData.addressTypeIndex];
+      // const hdPath = contextData.customHdPath || option.hdPath;
 
       // const addressTypeInfo = ADDRESS_TYPES[contextData.addressType];
       // console.log(`hdPath: ${finalHdPath}, passphrase:${contextData.passphrase}, addressType:${addressTypeInfo.name}`);
@@ -402,11 +378,11 @@ function Step2({
         <Input
           placeholder={'Custom HD Wallet Derivation Path'}
           value={pathText}
-          onChange={async (e) => {
+          onChange={async (e: { target: { value: SetStateAction<string>; }; }) => {
             setError('');
             setPathText(e.target.value);
           }}
-          onBlur={(e) => {
+          onBlur={() => {
             submitCustomHdPath();
           }}
         />
@@ -427,7 +403,7 @@ function Step2({
       <Input
         placeholder={'Passphrase'}
         defaultValue={contextData.passphrase}
-        onChange={async (e) => {
+        onChange={async (e: { target: { value: any; }; }) => {
           updateContextData({
             passphrase: e.target.value
           });
@@ -461,7 +437,7 @@ interface ContextData {
   step1Completed: boolean;
   tabType: TabType;
   restoreWalletType: RestoreWalletType;
-  isRestore: boolean;
+  isRestore?: boolean;
   isCustom: boolean;
   customHdPath: string;
   addressTypeIndex: number;
@@ -481,12 +457,6 @@ interface UpdateContextDataParams {
 }
 
 export default function CreateHDWalletScreen() {
-  const navigate = useNavigate();
-
-  const { state } = useLocation();
-  // const { fromUnlock } = state as {
-  //   fromUnlock: boolean;
-  // };
 
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
@@ -548,14 +518,6 @@ export default function CreateHDWalletScreen() {
     return item?.children;
   }, [items, contextData.tabType]);
 
-  const activeTabIndex = useMemo(() => {
-    const index = items.findIndex((v) => v.key === contextData.tabType);
-    if (index === -1) {
-      return 0;
-    } else {
-      return index;
-    }
-  }, [items, contextData.tabType]);
   return (
     <Layout>
       <Header
@@ -579,7 +541,7 @@ export default function CreateHDWalletScreen() {
               key: v.key,
               label: v.label
             }))}
-            onTabClick={(key) => {
+            onTabClick={(key: TabType) => {
               const toTabType = key as TabType;
               if (toTabType === TabType.STEP2) {
                 if (!contextData.step1Completed) {

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import WebApp from '@twa-dev/sdk'
 import { Buffer } from 'buffer';
-import { ActionComponentProvider } from '@/ui/components/ActionComponent';
+import { ActionComponentProvider } from '@/components/ActionComponent';
 window.Buffer = Buffer;
 window.global = window.globalThis;
 WebApp.ready();

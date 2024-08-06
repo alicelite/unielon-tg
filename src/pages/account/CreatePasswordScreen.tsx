@@ -1,16 +1,11 @@
-import { useEffect, useState } from 'react';
+import { KeyboardEvent, SetStateAction, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Button, Column, Content, Input, Layout, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import wallet from '@/background/controller/wallet';
-import { useAppState } from '@/context/AppStateContext';
-import { useWalletRequest } from '../../ui/utils';
+import { Button, Column, Content, Input, Layout, Text } from '@/components';
+import { useTools } from '@/components/ActionComponent';
 import { useNavigate } from "react-router-dom"
-type Status = '' | 'error' | 'warning' | undefined;
 
 const CreatePasswordScreen = () => {
-  // const { isBooted } = useAppState();
   const navigate = useNavigate()
   const { state } = useLocation();
   const { isNewAccount = false } = state as { isNewAccount?: boolean } || {};
@@ -31,7 +26,7 @@ const CreatePasswordScreen = () => {
   }
 
   const btnClick = () => {
-    run(password.trim());
+    run();
   };
 
   const verify = (pwd2: string) => {
@@ -73,7 +68,7 @@ const CreatePasswordScreen = () => {
             <Text text="You will use this to unlock your wallet" preset="sub" textCenter />
             <Input
               preset="password"
-              onBlur={(e) => {
+              onBlur={(e: { target: { value: SetStateAction<string>; }; }) => {
                 setPassword(e.target.value);
               }}
               autoFocus={true}
@@ -81,13 +76,13 @@ const CreatePasswordScreen = () => {
             <Input
               preset="password"
               placeholder="Confirm Password"
-              onChange={(e) => {
+              onChange={(e: { target: { value: SetStateAction<string>; }; }) => {
                 setPassword2(e.target.value);
               }}
-              onBlur={(e) => {
+              onBlur={(e: { target: { value: string; }; }) => {
                 verify(e.target.value);
               }}
-              onKeyUp={(e) => handleOnKeyUp(e)}
+              onKeyUp={(e: KeyboardEvent<HTMLInputElement>) => handleOnKeyUp(e)}
             />
             <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
           </Column>

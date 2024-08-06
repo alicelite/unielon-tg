@@ -1,8 +1,6 @@
-import { number } from 'bitcoinjs-lib/src/script';
 import { CHAINS_ENUM } from './constant';
 
 export enum AddressType {
-  // P2WPKH,
   P2PKH,
   P2SH
 }

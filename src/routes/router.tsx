@@ -5,7 +5,6 @@ import routesConfig from "./routes";
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;
-    console.log(`Generating route for path: ${path}, Element: ${Element ? 'Exists' : 'Does not exist'}`);
     return (
       <Route
         key={path}

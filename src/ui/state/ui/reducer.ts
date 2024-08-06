@@ -22,7 +22,7 @@ const slice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    reset(state) {
+    reset() {
       return initialState;
     },
     updateWalletTabScreen(
@@ -37,9 +37,6 @@ const slice = createSlice({
       state.walletTabScreen = Object.assign({}, state.walletTabScreen, payload);
       return state;
     }
-  },
-  extraReducers: (builder) => {
-    // todo
   }
 });
 

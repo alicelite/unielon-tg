@@ -1,12 +1,9 @@
 /* eslint-disable quotes */
-import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
-import { useWallet } from '@/ui/utils';
-import { useEffect } from 'react';
+import { Button, Column, Content, Layout, Row, Text, Logo } from '@/components';
+
 import { useNavigate } from "react-router-dom"
 const WelcomeScreen = () => {
   const navigate = useNavigate()
-  // const wallet = useWallet();
-
   return (
     <Layout>
       <Content justifyContent>
