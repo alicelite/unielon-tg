@@ -1,9 +1,9 @@
 /* eslint-disable quotes */
 import { Button, Column, Content, Layout, Row, Text, Logo } from '@/components';
 
-import { useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 const WelcomeScreen = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   return (
     <Layout>
       <Content justifyContent>
@@ -24,7 +24,7 @@ const WelcomeScreen = () => {
               text="Create new wallet"
               preset="primary"
               onClick={async () => {
-                navigate('account/create-password')
+                // navigate('account/create-password')
                 // const isBooted = await wallet.isBooted();
                 // console.log(isBooted, 'isBooted=====')
                 // if (isBooted) {
