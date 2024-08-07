@@ -1,32 +1,30 @@
 import React from "react";
-import { HashRouter as Router, Route, Routes } from "react-router-dom";
-import routesConfig from "./routes";
 
-const generateRoutes = (routes: any[]) => {
-  return routes.map((route) => {
-    const { path, element: Element, children } = route;
-    return (
-      <Route
-        key={path}
-        path={path}
-        element={
-          <React.Suspense fallback={<div>Loading...</div>}>
-            {Element ? <Element /> : null}
-          </React.Suspense>
-        }
-      >
-        {children && generateRoutes(children)}
-      </Route>
-    );
-  });
-};
+interface Route {
+  path: string;
+  element?: React.LazyExoticComponent<React.FC>;
+  children?: Route[];
+}
 
-const AppRoutes = () => {
-  return (
-    <Router>
-      <Routes>{generateRoutes(routesConfig)}</Routes>
-    </Router>
-  );
-};
+const routes: Route[] = [
+  {
+    path: "/",
+    element: React.lazy(() => import("../pages/main/WelcomeScreen")),
+  },
+  {
+    path: "/account",
+    element: React.lazy(() => import("../pages/layouts/CommonLayout")),
+    children: [
+      {
+        path: "create-password",
+        element: React.lazy(() => import("../pages/account/CreatePasswordScreen")),
+      },
+      {
+        path: "create-hd-wallet",
+        element: React.lazy(() => import("../pages/account/CreateHDWalletScreen")),
+      }
+    ]
+  }
+];
 
-export default AppRoutes;
+export default routes;
