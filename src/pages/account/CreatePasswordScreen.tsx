@@ -9,7 +9,6 @@ const CreatePasswordScreen = () => {
   const navigate = useNavigate()
   const { state } = useLocation();
   const { isNewAccount = false } = state as { isNewAccount?: boolean } || {};
-  console.log(isNewAccount, 'isNewAccount====')
   const [password, setPassword] = useState('');
 
   const [password2, setPassword2] = useState('');

@@ -11,7 +11,6 @@ import { Text } from '../Text';
 import './index.module.less';
 
 interface HeaderProps {
-  onBack?: () => void;
   title?: string;
   LeftComponent?: React.ReactNode;
   RightComponent?: React.ReactNode;
@@ -19,7 +18,7 @@ interface HeaderProps {
 }
 
 export function Header(props: HeaderProps) {
-  const { onBack, title, LeftComponent, RightComponent, children } = props;
+  const { title, LeftComponent, RightComponent, children } = props;
 
   const CenterComponent = useMemo(() => {
     if (children) {
@@ -43,19 +42,6 @@ export function Header(props: HeaderProps) {
         <Row full>
           <Column selfItemsCenter>
             {LeftComponent}
-            {onBack && (
-              <Row
-                onClick={() => {
-                  onBack();
-                }}
-              >
-                <Icon>
-                  <FontAwesomeIcon icon={faArrowLeft} />
-                </Icon>
-
-                <Text text="Back" preset="regular-bold" />
-              </Row>
-            )}
           </Column>
         </Row>
 

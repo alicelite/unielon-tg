@@ -37,15 +37,15 @@ function App() {
     return () => navigator.detach();
   }, [navigator]);
 
-  if (!location.search) {
-    return (
-      <BrowserRouter>
-       <Routes>
-        {generateRoutes(routesConfig)}
-       </Routes>
-      </BrowserRouter>
-    )
-  }
+  // if (!location.search) {
+  //   return (
+  //     <BrowserRouter>
+  //      <Routes>
+  //       {generateRoutes(routesConfig)}
+  //      </Routes>
+  //     </BrowserRouter>
+  //   )
+  // }
 
   return (
     <Router location={location} navigator={reactNavigator}>
