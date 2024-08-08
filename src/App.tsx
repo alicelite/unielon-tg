@@ -2,7 +2,6 @@ import { useIntegration } from '@telegram-apps/react-router-integration';
 import { initNavigator } from '@telegram-apps/sdk-react';
 import { useEffect, useMemo } from 'react';
 import {
-  BrowserRouter,
   Route,
   Router,
   Routes,
