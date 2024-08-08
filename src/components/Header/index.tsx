@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
 
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { Column } from '../Column';
-import { Icon } from '../Icon';
 import { Logo } from '../Logo';
 import { Row } from '../Row';
 import { Text } from '../Text';
