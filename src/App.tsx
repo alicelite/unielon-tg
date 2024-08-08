@@ -2,6 +2,7 @@ import { useIntegration } from '@telegram-apps/react-router-integration';
 import { initNavigator } from '@telegram-apps/sdk-react';
 import { useEffect, useMemo } from 'react';
 import {
+  BrowserRouter,
   Route,
   Router,
   Routes,
@@ -9,7 +10,7 @@ import {
 import routesConfig from './routes/index';
 import "./assets/style/var.less";
 import React from "react";
-
+import { isTelegramEnvironment } from "@/ui/utils";
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;
@@ -36,6 +37,16 @@ function App() {
     navigator.attach();
     return () => navigator.detach();
   }, [navigator]);
+
+  if (!isTelegramEnvironment()) {
+    return (
+      <BrowserRouter>
+       <Routes>
+        {generateRoutes(routesConfig)}
+       </Routes>
+      </BrowserRouter>
+    )
+  }
   return (
     <Router location={location} navigator={reactNavigator}>
       <Routes>
