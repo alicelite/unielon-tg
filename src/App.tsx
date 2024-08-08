@@ -10,7 +10,7 @@ import {
 import routesConfig from './routes/index';
 import "./assets/style/var.less";
 import React from "react";
-import { isTelegramEnvironment } from "@/ui/utils";
+import { isTelegramEnvironment } from './ui/utils';
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;
@@ -33,6 +33,8 @@ const generateRoutes = (routes: any[]) => {
 function App() {
   const navigator = useMemo(() => initNavigator('app-navigation-state'), []);
   const [location, reactNavigator] = useIntegration(navigator);
+  console.log(location, reactNavigator, 111);
+  console.log(navigator, 222);
   useEffect(() => {
     navigator.attach();
     return () => navigator.detach();
@@ -47,6 +49,7 @@ function App() {
       </BrowserRouter>
     )
   }
+
   return (
     <Router location={location} navigator={reactNavigator}>
       <Routes>
