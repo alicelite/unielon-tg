@@ -1,27 +1,27 @@
-# 将静态内容部署到 GitHub Pages 的简单工作流
-name: 将静态内容部署到页面
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
-  # 针对默认分支的推送上运行
+  # Runs on pushes targeting the default branch
   push:
     branches: ['master']
 
-  # 允许您从操作选项卡手动运行此工作流
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 权限以允许部署到 GitHub Pages
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并行部署
+# Allow one concurrent deployment
 concurrency:
-  group: '页面'
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # 由于我们只是部署，因此单个部署作业
+  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -30,23 +30,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: 设置 Node
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: './'
-      - name: 安装依赖
+      - name: Install dependencies
         run: npm install
-      - name: 构建
+      - name: Build
         run: npm run build
-      - name: 设置页面
+      - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: 上传构件
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # 上传 dist 库
+          # Upload dist repository
           path: './docs'
-      - name: 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
