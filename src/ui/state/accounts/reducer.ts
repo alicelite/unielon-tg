@@ -79,7 +79,7 @@ const slice = createSlice({
     rejectLogin(state) {
       state.loading = false;
     },
-    reset(state) {
+    reset() {
       return initialState;
     },
     updateAccountName(

@@ -30,7 +30,8 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: './docs'
+    outDir: './docs',
+    target: 'esnext'
   },
   base: './'
 })

@@ -18,7 +18,7 @@ export function AddressBar() {
         padding: '8px 16px',
         borderRadius: '5px'
       }}
-      onClick={(e) => {
+      onClick={() => {
         copyToClipboard(address).then(() => {
           tools.toastSuccess('Copied');
         });

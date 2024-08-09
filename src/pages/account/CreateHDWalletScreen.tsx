@@ -1,7 +1,6 @@
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { KeyboardEvent, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import * as bip39 from 'bip39';
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '../../shared/types';
 import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text, Icon, TabBar } from '@/components';
@@ -13,9 +12,9 @@ import { copyToClipboard } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom"
 import { useGlobalState } from '../../Context';
-import { generateAddress, generateChild, generateRoot, encrypt, hash } from '@/ui/utils/wallet';
+import { generateAddress, generateChild, generateRoot, encrypt } from '@/ui/utils/wallet';
 import { setLocalValue } from '@/ui/utils';
-import { PASSWORD, WALLET } from '@/shared/constant';
+import { WALLET } from '@/shared/constant';
 import { generatePhrase } from '../../ui/utils/wallet';
 
 function Step0({
@@ -493,6 +492,7 @@ export default function CreateHDWalletScreen() {
     restoreWalletType: RestoreWalletType.UNIELON,
     isCustom: false,
     customHdPath: '',
+    address: '',
     addressTypeIndex: 0
   });
 

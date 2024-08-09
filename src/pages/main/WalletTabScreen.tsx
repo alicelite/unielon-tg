@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Column, Content, Header, Layout, Row, Text } from '../../components';
 import { AddressBar } from '@/components/AddressBar';
 import { Button } from '@/components/Button';
@@ -47,7 +47,7 @@ export default function WalletTabScreen() {
               text="Receive"
               preset="default"
               icon="receive"
-              onClick={(e) => {
+              onClick={() => {
                 navigate('ReceiveScreen');
               }}
               full
@@ -56,7 +56,7 @@ export default function WalletTabScreen() {
               text="Send"
               preset="default"
               icon="send"
-              onClick={(e) => {
+              onClick={() => {
                 navigate('TxCreateScreen');
               }}
               full
@@ -65,7 +65,7 @@ export default function WalletTabScreen() {
               text="History"
               preset="default"
               icon="history"
-              onClick={(e) => {
+              onClick={() => {
                 navigate('HistoryScreen');
               }}
               full
