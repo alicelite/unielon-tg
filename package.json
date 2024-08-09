@@ -29,6 +29,7 @@
     "browserify": "^17.0.0",
     "buffer": "^6.0.3",
     "compare-versions": "^6.1.1",
+    "crypto-js": "^4.2.0",
     "dogecoin-hd-keyring": "^0.2.0",
     "dogecoin-simple-keyring": "^0.1.8",
     "react": "^18.3.1",
@@ -37,7 +38,8 @@
     "react-router-dom": "^6.22.0",
     "tiny-secp256k1": "^2.2.3",
     "uni-doge": "^10.0.5",
-    "vite-plugin-wasm": "^3.3.0"
+    "vite-plugin-wasm": "^3.3.0",
+    "wretch": "^2.9.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -51,6 +53,7 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "less": "^4.2.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

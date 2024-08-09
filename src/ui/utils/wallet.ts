@@ -2,6 +2,7 @@ import BIP32Factory from 'bip32';
 import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as ecc from 'tiny-secp256k1';
+import * as CryptoJS from 'crypto-js';
 const bip32 = BIP32Factory(ecc);
 export const network = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -16,32 +17,79 @@ export const network = {
   wif: 0x80,
 };
 
+const JSONFormatter = {
+  stringify(cipherParams: { ciphertext: { toString: (arg0: any) => any; }; iv: { toString: () => any; }; salt: { toString: () => any; }; }) {
+    // create json object with ciphertext
+    const jsonObj: { ct: any; iv?: any; s?: any } = {
+      ct: cipherParams.ciphertext.toString(CryptoJS.enc.Base64),
+    };
+    // optionally add iv or salt
+    if (cipherParams.iv) {
+      jsonObj.iv = cipherParams.iv.toString();
+    }
+    if (cipherParams.salt) {
+      jsonObj.s = cipherParams.salt.toString();
+    }
+    // stringify json object
+    return JSON.stringify(jsonObj);
+  },
+  parse(jsonStr: string) {
+    // parse json string
+    const jsonObj = JSON.parse(jsonStr);
+    // extract ciphertext from json object, and create cipher params object
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Base64.parse(jsonObj.ct),
+    });
+    // optionally extract iv or salt
+    if (jsonObj.iv) {
+      cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv);
+    }
+    if (jsonObj.s) {
+      cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s);
+    }
+
+    return cipherParams;
+  },
+};
+
 export const generatePhrase = () => {
   return bip39.generateMnemonic(128);
 }
 
-export const generateRoot = (phrase: string) => {
-  console.log(phrase, 'phrase====')
-  
+export const generateRoot = (phrase: any) => {
   return bip32.fromSeed(bip39.mnemonicToSeedSync(phrase));
 }
 
-export const generateChild = (root: any, idx: any) => {
-  console.log(root, idx, '----ed')
+export function generateChild(root: any, idx: any) {
   return root.derivePath(`m/44'/${network.bip44}'/0'/0/${idx}`);
 }
 
-export const generateAddress = (child: { publicKey: any; }) => {
-  try {
-    const address = bitcoin.payments.p2pkh({
-      pubkey: child.publicKey,
-      network,
-    }).address;
-  
-    console.log('Generated address:', address);
-    return address;
-  } catch (error) {
-    console.error('Error generating address:', error);
-    throw error;
-  }
+export function generateAddress(child: any) {
+  console.log(child, 'child====')
+  return bitcoin.payments.p2pkh({
+    pubkey: child.publicKey,
+    network,
+  }).address;
 }
+
+export const encrypt = ({data, password}: { data: any, password: string }) => {
+  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), password, {
+    format: JSONFormatter,
+  });
+  return encrypted.toString();
+};
+
+export const decrypt = ({ data, password }: { data: any, password: string }) => {
+  try {
+    const decrypted = CryptoJS.AES.decrypt(data, password, {
+      format: JSONFormatter,
+    });
+    return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+  } catch (error) {
+    return null;
+  }
+};
+
+export const hash = (password: any) => {
+  return CryptoJS.SHA256(password).toString();
+};

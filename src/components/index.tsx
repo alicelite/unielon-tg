@@ -12,9 +12,12 @@ import { Row } from './Row';
 import { Text } from './Text';
 import { Grid } from './Grid';
 import { TabBar } from './TabBar';
+import { Footer } from './Footer';
+import { AddressBar } from './AddressBar';
 import { FooterButtonContainer } from './FooterButtonContainer';
 export {
   Button,
+  Footer,
   Layout,
   Content,
   Icon,
@@ -28,5 +31,6 @@ export {
   Image,
   Grid,
   TabBar,
+  AddressBar,
   FooterButtonContainer
 };

@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import ui from './ui/reducer';
-
+import accounts from './accounts/reducer';
 const store = configureStore({
   reducer: {
-    ui
+    ui,
+    accounts
   }
 });
 

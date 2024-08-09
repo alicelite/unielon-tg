@@ -19,6 +19,7 @@ interface AddressTypeCardProps {
 }
 export function AddressTypeCard(props: AddressTypeCardProps) {
   const { onClick, label, address, checked, assets } = props;
+  console.log(address, 'address====2')
   const hasVault = Boolean(assets.satoshis && assets.satoshis > 0);
   return (
     <Card px="zero" py="zero" gap="zero" rounded onClick={onClick}>

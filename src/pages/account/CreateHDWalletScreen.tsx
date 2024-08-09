@@ -12,6 +12,11 @@ import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom"
+import { useGlobalState } from '../../Context';
+import { generateAddress, generateChild, generateRoot, encrypt, hash } from '@/ui/utils/wallet';
+import { setLocalValue } from '@/ui/utils';
+import { PASSWORD, WALLET } from '@/shared/constant';
+import { generatePhrase } from '../../ui/utils/wallet';
 
 function Step0({
   updateContextData
@@ -45,6 +50,9 @@ function Step1_Create({
   const tools = useTools();
   const [mnemonicWords, setMnemonicWords] = useState<string[]>([])
   const [normalMnemonic, setNormalMnemonic] = useState('')
+  const { state, dispatch } = useGlobalState();
+  const { password } = state;
+
   const onChange = (e: CheckboxChangeEvent) => {
     const val = e.target.checked;
     setChecked(val);
@@ -59,20 +67,37 @@ function Step1_Create({
     });
   }
 
-  const btnClick = () => {
+  const btnClick = async () => {
+    const root = generateRoot(normalMnemonic)
+    const child = generateChild(root, 0)
+    const address = generateAddress(child)
+    console.log(address, 'address0====', child)
+    dispatch({ type: 'SET_ADDRESS', payload: address });
+    const wallet = {
+      normalMnemonic,
+      addresses: [address],
+      nicknames: { [address]: 'Address 1' },
+    };
+
+    const encryptedWallet = encrypt({
+      data: wallet,
+      password: password,
+    });
+
+    await setLocalValue({ [WALLET]: encryptedWallet})
     updateContextData({
+      address,
       tabType: TabType.STEP2
     });
   };
 
   const getMnemonic = () => {
-    const mnemonicWords = bip39.generateMnemonic(128);
+    const mnemonicWords = generatePhrase();
     console.log(mnemonicWords, 'mnemonicWords======')
     setNormalMnemonic(mnemonicWords)
     const result = mnemonicWords.split(' ')
     setMnemonicWords(result)
-    // console.log(address0, 'address0====')
-  };
+  }
   useEffect(() => {
     getMnemonic()
   }, [])
@@ -112,7 +137,7 @@ function Step1_Create({
       </Row>
 
       <Row justifyCenter>
-        <Checkbox onChange={onChange} checked={checked} style={{ fontSize: fontSizes.sm }}>
+        <Checkbox onChange={onChange} checked={checked} style={{ fontSize: fontSizes.sm }} className="custom-checkbox">
           <Text text="I saved My Secret Recovery Phrase" />
         </Checkbox>
       </Row>
@@ -247,7 +272,6 @@ function Step2({
 }) {
   // const wallet = useWallet();
   const tools = useTools();
-
   const hdPathOptions = useMemo(() => {
     console.log(contextData, 'contextData======<<<<')
     const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
@@ -339,12 +363,12 @@ function Step2({
   useEffect(() => {
     addressTypeInfo()
   }, [hdPathOptions, previewAddresses])
+  console.log(hdPathOptionsList, 'hdPathOptionsList===')
   return (
     <Column>
       <Text text="Address Type" preset="bold" />
       {hdPathOptionsList?.map((item, index) => {
-        const address = previewAddresses[index]?.address;
-        const assets = addressAssets[address] || {
+        const assets = addressAssets[contextData.address] || {
           total_doge: '--',
           satoshis: 0,
           total_inscription: 0
@@ -353,13 +377,12 @@ function Step2({
         if ((+previewAddresses[index]?.balance === 0 || previewAddresses[index]?.drcList?.length > 0) && !hasVault) {
           return null;
         }
-
         const hdPath = (contextData.customHdPath || item.hdPath) + '/0';
         return (
           <AddressTypeCard
             key={index}
             label={`${item.label} (${hdPath})`}
-            address={address}
+            address={contextData.address}
             assets={assets}
             checked={index == contextData.addressTypeIndex}
             onClick={() => {
@@ -430,6 +453,7 @@ enum TabType {
 }
 
 interface ContextData {
+  address: any;
   mnemonics: string;
   hdPath: string;
   passphrase: string;
@@ -454,6 +478,7 @@ interface UpdateContextDataParams {
   isCustom?: boolean;
   customHdPath?: string;
   addressTypeIndex?: number;
+  address?: string;
 }
 
 export default function CreateHDWalletScreen() {

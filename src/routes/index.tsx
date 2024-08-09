@@ -12,6 +12,10 @@ const routes: Route[] = [
     element: React.lazy(() => import("../pages/main/WelcomeScreen")),
   },
   {
+    path: "/home",
+    element: React.lazy(() => import("../pages/main/WalletTabScreen")),
+  },
+  {
     path: "/account",
     element: React.lazy(() => import("../pages/layouts/CommonLayout")),
     children: [

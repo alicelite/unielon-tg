@@ -4,10 +4,14 @@ import { useLocation } from 'react-router-dom';
 import { Button, Column, Content, Input, Layout, Text } from '@/components';
 import { useTools } from '@/components/ActionComponent';
 import { useNavigate } from "react-router-dom"
-
+import { useGlobalState } from '../../Context';
+import { setLocalValue } from '../../ui/utils';
+import { PASSWORD } from '../../shared/constant';
+import { encrypt, hash } from '../../ui/utils/wallet';
 const CreatePasswordScreen = () => {
   const navigate = useNavigate()
   const { state } = useLocation();
+  const { dispatch } = useGlobalState();
   const { isNewAccount = false } = state as { isNewAccount?: boolean } || {};
   const [password, setPassword] = useState('');
 
@@ -24,7 +28,14 @@ const CreatePasswordScreen = () => {
     }
   }
 
-  const btnClick = () => {
+  const btnClick = async () => {
+    dispatch({ type: 'SET_PASSWORD', payload: password });
+    dispatch({ type: 'SET_IS_BOOTED', payload: true });
+    const encryptedPassword = encrypt({
+      data: hash(password),
+      password: password,
+    });
+    await setLocalValue({ [PASSWORD]: encryptedPassword });
     run();
   };
 

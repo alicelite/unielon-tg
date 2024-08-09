@@ -1,6 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 
-import { SATS_DOMAIN, UNIELON_DOMAIN } from '@/shared/constant';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 
@@ -139,23 +138,17 @@ export const AddressInput = (props: InputProps) => {
     if (validAddress) {
       setValidAddress('');
     }
-
-    const teststr = inputAddress.toLowerCase();
-    if (teststr.endsWith(SATS_DOMAIN) || teststr.endsWith(UNIELON_DOMAIN)) {
-     console.log(teststr, 'teststr===')
-    } else {
-      try {
-        const bitcoin = require('bitcoinjs-lib')
-        const isValid = bitcoin.address.toOutputScript(inputAddress, DOGECOIN_NETWORK)
-        if (!isValid) {
-          setFormatError('Recipient address is invalid')
-          return;
-        }
-        setValidAddress(inputAddress)
-      } catch(err) {
+    try {
+      const bitcoin = require('bitcoinjs-lib')
+      const isValid = bitcoin.address.toOutputScript(inputAddress, DOGECOIN_NETWORK)
+      if (!isValid) {
         setFormatError('Recipient address is invalid')
-        console.log(err)
+        return;
       }
+      setValidAddress(inputAddress)
+    } catch(err) {
+      setFormatError('Recipient address is invalid')
+      console.log(err)
     }
   };
 

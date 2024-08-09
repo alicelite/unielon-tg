@@ -1,8 +1,11 @@
 /* eslint-disable quotes */
 import { Button, Column, Content, Layout, Row, Text, Logo } from '@/components';
-import { useNavigate } from "react-router-dom"
+import { NavigateOptions, useNavigate } from "react-router-dom"
+import { useGlobalState } from '../../Context';
 const WelcomeScreen = () => {
   const navigate = useNavigate()
+  const { state } = useGlobalState();
+  const { isBooted } = state;
   return (
     <Layout>
       <Content justifyContent>
@@ -18,31 +21,26 @@ const WelcomeScreen = () => {
               preset="sub"
               textCenter
             />
-
             <Button
               text="Create new wallet"
               preset="primary"
               onClick={async () => {
-                navigate('account/create-password')
-                // const isBooted = await wallet.isBooted();
-                // console.log(isBooted, 'isBooted=====')
-                // if (isBooted) {
-                //   navigate('CreateHDWalletScreen', { isImport: false });
-                // } else {
-                //   navigate('CreatePasswordScreen', { isNewAccount: true });
-                // }
+                if (isBooted) {
+                  navigate('account/create-hd-wallet', { isImport: false } as NavigateOptions);
+                } else {
+                  navigate('account/create-password', { isNewAccount: true } as NavigateOptions & { isNewAccount: boolean });
+                }
               }}
             />
             <Button
               text="I already have a wallet"
               preset="default_"
               onClick={async () => {
-                // const isBooted = await wallet.isBooted();
-                // if (isBooted) {
-                //   navigate('CreateHDWalletScreen', { isImport: true });
-                // } else {
-                //   navigate('CreatePasswordScreen', { isNewAccount: false });
-                // }
+                if (isBooted) {
+                  navigate('account/create-hd-wallet', { isImport: true } as NavigateOptions);
+                } else {
+                  navigate('account/create-password', { isNewAccount: false } as NavigateOptions & { isNewAccount: boolean });
+                }
               }}
             />
           </Column>
