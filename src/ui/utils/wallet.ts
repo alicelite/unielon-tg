@@ -3,7 +3,12 @@ import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as ecc from 'tiny-secp256k1';
 import * as CryptoJS from 'crypto-js';
+import ECPairFactory from 'ecpair';
+import * as wif from 'wif';
+
 const bip32 = BIP32Factory(ecc);
+const ECPair = ECPairFactory(ecc);
+
 export const network = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
   bech32: 'dc',
@@ -14,8 +19,14 @@ export const network = {
   },
   pubKeyHash: 0x1e,
   scriptHash: 0x16,
-  wif: 0x80,
+  wif: 0x9e,
 };
+
+interface WIF {
+  version: number;
+  privateKey: Buffer;
+  compressed: boolean;
+}
 
 const JSONFormatter = {
   stringify(cipherParams: { ciphertext: { toString: (arg0: any) => any; }; iv: { toString: () => any; }; salt: { toString: () => any; }; }) {
@@ -64,8 +75,30 @@ export function generateChild(root: any, idx: any) {
   return root.derivePath(`m/44'/${network.bip44}'/0'/0/${idx}`);
 }
 
+export function generatePrivateKey(child: any) {
+  const privateKeyBuffer = child.privateKey;
+  const wifObject: WIF = {
+    version: network.wif,
+    privateKey: privateKeyBuffer,
+    compressed: true,
+  };
+  const wifKey = wif.encode(wifObject);
+  return wifKey;
+}
+
+export function generateAddressFromPrivateKey(privateKey: string): string {
+  const decoded = wif.decode(privateKey);
+  const privateKeyBuffer = Buffer.from(decoded.privateKey);
+  const keyPair = ECPair.fromPrivateKey(privateKeyBuffer, { network });
+  const { address } = bitcoin.payments.p2pkh({
+    pubkey: keyPair.publicKey,
+    network,
+  });
+  console.log(address, 'generateAddressFromPrivateKey===');
+  return address!;
+}
+
 export function generateAddress(child: any) {
-  console.log(child, 'child====')
   return bitcoin.payments.p2pkh({
     pubkey: child.publicKey,
     network,

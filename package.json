@@ -39,6 +39,7 @@
     "tiny-secp256k1": "^2.2.3",
     "uni-doge": "^10.0.5",
     "vite-plugin-wasm": "^3.3.0",
+    "wif": "^5.0.0",
     "wretch": "^2.9.0"
   },
   "devDependencies": {

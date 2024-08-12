@@ -70,7 +70,6 @@ function Step1_Create({
     const root = generateRoot(normalMnemonic)
     const child = generateChild(root, 0)
     const address = generateAddress(child)
-    console.log(address, 'address0====', child)
     dispatch({ type: 'SET_ADDRESS', payload: address });
     const wallet = {
       normalMnemonic,
@@ -91,7 +90,7 @@ function Step1_Create({
   };
 
   const getMnemonic = () => {
-    const mnemonicWords = generatePhrase();
+    const mnemonicWords = 'divert toddler million border opera tuition october pulse weird mirror orchard absorb'//generatePhrase();
     console.log(mnemonicWords, 'mnemonicWords======')
     setNormalMnemonic(mnemonicWords)
     const result = mnemonicWords.split(' ')
@@ -346,7 +345,7 @@ function Step2({
       // console.log(`hdPath: ${finalHdPath}, passphrase:${contextData.passphrase}, addressType:${addressTypeInfo.name}`);
 
       // await createAccount(contextData.mnemonics, hdPath, contextData.passphrase, contextData.addressType);
-      navigate('MainScreen');
+      navigate('/home');
     } catch (e) {
       tools.toastError((e as any).message);
     }
