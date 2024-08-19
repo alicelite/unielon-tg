@@ -11,7 +11,6 @@ import {
 import routesConfig from './routes/index';
 import "./assets/style/var.less";
 import React from "react";
-import { PASSWORD } from './shared/constant';
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;
