@@ -25,7 +25,6 @@ const WelcomeScreen = () => {
               text="Create new wallet"
               preset="primary"
               onClick={async () => {
-                
                 if (isBooted) {
                   navigate('account/create-hd-wallet', { state: { isImport: false } } as NavigateOptions);
                 } else {

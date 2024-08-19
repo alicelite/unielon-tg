@@ -35,6 +35,7 @@ const CreatePasswordScreen = () => {
       data: hash(password),
       password: password,
     });
+    setLocalValue({'password': password})
     await setLocalValue({ [PASSWORD]: encryptedPassword });
     run();
   };

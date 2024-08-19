@@ -37,7 +37,7 @@ const RedirectHandler = () => {
 
   useEffect(() => {
     if (!checked) {
-      const password = sessionStorage.getItem(PASSWORD);
+      const password = localStorage.getItem(PASSWORD);
       if (password) {
         navigate('/account/unlock');
       } else {
