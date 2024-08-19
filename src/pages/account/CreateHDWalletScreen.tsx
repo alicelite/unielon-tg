@@ -10,13 +10,10 @@ import { FooterButtonContainer } from '@/components/FooterButtonContainer';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useGlobalState } from '../../Context';
-import { generateAddress, generateChild, generateRoot, encrypt } from '@/ui/utils/wallet';
-import { setLocalValue } from '@/ui/utils';
-import { WALLET } from '@/shared/constant';
 import { generatePhrase } from '../../ui/utils/wallet';
-
+import { createAndStoreWallet } from '../../ui/utils/hooks';
 function Step0({
   updateContextData
 }: {
@@ -48,7 +45,7 @@ function Step1_Create({
   const [checked, setChecked] = useState(false);
   const tools = useTools();
   const [mnemonicWords, setMnemonicWords] = useState<string[]>([])
-  const [normalMnemonic, setNormalMnemonic] = useState('')
+  const [phrase, setPhrase] = useState('')
   const { state, dispatch } = useGlobalState();
   const { password } = state;
 
@@ -59,30 +56,13 @@ function Step1_Create({
   };
 
   function copy(str: string) {
-    console.log(str, 'str==', typeof str)
     copyToClipboard(str).then(() => {
-      console.log(tools, 'tools==')
       tools.toastSuccess('Copied');
     });
   }
 
   const btnClick = async () => {
-    const root = generateRoot(normalMnemonic)
-    const child = generateChild(root, 0)
-    const address = generateAddress(child)
-    dispatch({ type: 'SET_ADDRESS', payload: address });
-    const wallet = {
-      normalMnemonic,
-      addresses: [address],
-      nicknames: { [address]: 'Address 1' },
-    };
-
-    const encryptedWallet = encrypt({
-      data: wallet,
-      password: password,
-    });
-
-    await setLocalValue({ [WALLET]: encryptedWallet})
+    const address = await createAndStoreWallet(phrase, password, dispatch);
     updateContextData({
       address,
       tabType: TabType.STEP2
@@ -90,9 +70,8 @@ function Step1_Create({
   };
 
   const getMnemonic = () => {
-    const mnemonicWords = 'divert toddler million border opera tuition october pulse weird mirror orchard absorb'//generatePhrase();
-    console.log(mnemonicWords, 'mnemonicWords======')
-    setNormalMnemonic(mnemonicWords)
+    const mnemonicWords = generatePhrase();
+    setPhrase(mnemonicWords)
     const result = mnemonicWords.split(' ')
     setMnemonicWords(result)
   }
@@ -112,7 +91,7 @@ function Step1_Create({
       <Row
         justifyCenter
         onClick={() => {
-          copy(normalMnemonic);
+          copy(phrase);
         }}
       >
         <Icon icon="copy" color="textDim" />
@@ -156,7 +135,8 @@ function Step1_Import({
   const [keys, setKeys] = useState<Array<string>>(new Array(12).fill(''));
   const [curInputIndex] = useState(0);
   const [disabled, setDisabled] = useState(true);
-
+  const { state, dispatch } = useGlobalState();
+  const { password } = state;
   const handleEventPaste = (event: { clipboardData: { getData: (arg0: string) => any; }; preventDefault: () => void; }, index: number) => {
     const copyText = event.clipboardData?.getData('text/plain');
     const textArr = copyText.trim().split(' ');
@@ -200,9 +180,10 @@ function Step1_Import({
   }, [keys]);
 
 
-  const onNext = () => {
+  const onNext = async () => {
     const mnemonics = keys.join(' ');
-    updateContextData({ mnemonics, tabType: TabType.STEP3 });
+    const address = await createAndStoreWallet(mnemonics, password, dispatch);
+    updateContextData({ mnemonics, address, tabType: TabType.STEP3 });
   };
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && 'Enter' == e.key) {
@@ -271,7 +252,6 @@ function Step2({
   // const wallet = useWallet();
   const tools = useTools();
   const hdPathOptions = useMemo(() => {
-    console.log(contextData, 'contextData======<<<<')
     const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
     return ADDRESS_TYPES.filter((v: { displayIndex: number; value: any; }) => {
       if (v.displayIndex < 0) {
@@ -316,7 +296,6 @@ function Step2({
   const [pathText, setPathText] = useState(contextData.customHdPath);
 
   useEffect(() => {
-    console.log(hdPathOptions, contextData, 'contextData=====1111')
     const option = hdPathOptions[contextData.addressTypeIndex];
     updateContextData({ addressType: option.addressType });
   }, [contextData.addressTypeIndex]);
@@ -338,13 +317,6 @@ function Step2({
 
   const onNext = async () => {
     try {
-      // const option = hdPathOptions[contextData.addressTypeIndex];
-      // const hdPath = contextData.customHdPath || option.hdPath;
-
-      // const addressTypeInfo = ADDRESS_TYPES[contextData.addressType];
-      // console.log(`hdPath: ${finalHdPath}, passphrase:${contextData.passphrase}, addressType:${addressTypeInfo.name}`);
-
-      // await createAccount(contextData.mnemonics, hdPath, contextData.passphrase, contextData.addressType);
       navigate('/home');
     } catch (e) {
       tools.toastError((e as any).message);
@@ -361,7 +333,7 @@ function Step2({
   useEffect(() => {
     addressTypeInfo()
   }, [hdPathOptions, previewAddresses])
-  console.log(hdPathOptionsList, 'hdPathOptionsList===')
+  
   return (
     <Column>
       <Text text="Address Type" preset="bold" />
@@ -480,7 +452,8 @@ interface UpdateContextDataParams {
 }
 
 export default function CreateHDWalletScreen() {
-
+  const { state } = useLocation();
+  const { isImport = false } = state as { isImport?: boolean } || {};
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
     hdPath: '',
@@ -503,7 +476,7 @@ export default function CreateHDWalletScreen() {
   );
 
   const items = useMemo(() => {
-    if (contextData.isRestore) {
+    if (isImport) {
       return [
         {
           key: TabType.STEP1,

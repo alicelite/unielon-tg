@@ -30,3 +30,20 @@ export const setLocalValue = (keyValues: any) => {
   });
   return Promise.resolve();
 };
+
+export const getLocalValue = (key: string) => {
+  const value = JSON.parse(localStorage.getItem(key) as string);
+  return Promise.resolve(value)
+};
+
+export const setSessionValue = (keyValues: any) => {
+  Object.keys(keyValues).forEach((key) => {
+    sessionStorage.setItem(key, JSON.stringify(keyValues[key]));
+  });
+  return Promise.resolve();
+};
+
+export const getSessionValue = (key: any) => {
+  const value = JSON.parse(sessionStorage.getItem(key) as string);
+  return Promise.resolve(value);
+};

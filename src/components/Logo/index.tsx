@@ -1,7 +1,6 @@
 import { Row } from '../Row';
 import logo from "@/assets/wallet-logo.png"
 export function Logo(props: { preset?: 'large' | 'small' }) {
-  console.log('props', props);
   const { preset } = props;
   if (preset === 'large') {
     return (

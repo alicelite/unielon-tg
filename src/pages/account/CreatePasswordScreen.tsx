@@ -22,9 +22,9 @@ const CreatePasswordScreen = () => {
   const tools = useTools();
   const run = () => {
     if (isNewAccount) {
-      navigate('/account/create-hd-wallet');
+      navigate('/account/create-hd-wallet', { state: { isImport: false } });
     } else {
-      navigate('/account/create-hd-wallet');
+      navigate('/account/create-hd-wallet', { state: { isImport: true } });
     }
   }
 

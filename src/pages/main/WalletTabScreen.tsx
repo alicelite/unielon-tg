@@ -1,31 +1,46 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Column, Content, Header, Layout, Row, Text } from '../../components';
 import { AddressBar } from '@/components/AddressBar';
 import { Button } from '@/components/Button';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
+import { getLocalValue, getSessionValue } from '../../ui/utils';
+import { PASSWORD, WALLET } from '../../shared/constant';
+import { decrypt } from '../../ui/utils/wallet';
+
 export default function WalletTabScreen() {
   const [totalPrice, setTotalPrice] = useState(0)
   const navigate = useNavigate()
   const [balance, setBalance] = useState()
-  
+  const [address, setAddress] = useState()
   const balanceValue = async () => {
-    const res =  await getBalance('DH5RX8yrAS38VCKQyVuicmmf8VvvztZvJM');
-    const balance = (res?.balance).toFixed(4) || 0
+    const res =  await getBalance(address);
+    const balance = res?.balance?.toFixed(4) ?? 0;
     getDogePriceInfo(balance)
     setBalance(balance)
   };
-  useMemo(() => {
-    balanceValue()
-  }, []);
+  useEffect(() => {
+    if(address) {
+      balanceValue()
+    }
+  }, [address]);
 
   const getDogePriceInfo = async (balance: any) => {
     const dogePrice = await getDogePrice()
     const totalPrice = Number(dogePrice?.last) * Number(balance)
-    console.log(totalPrice, 'totalPrice===')
     setTotalPrice(totalPrice)
   }
-
+  useEffect(() => {
+    Promise.all([getLocalValue(WALLET), getSessionValue(PASSWORD)]).then(
+      ([wallet, password]) => {
+        const decryptedWallet = decrypt({
+          data: wallet,
+          password,
+        });
+        setAddress(decryptedWallet?.addresses[0]);
+        console.log('decryptedWallet', decryptedWallet, decryptedWallet?.addresses );
+      })
+  }, [])
   return (
     <Layout>
       <Header/>

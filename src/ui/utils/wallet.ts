@@ -5,6 +5,8 @@ import * as ecc from 'tiny-secp256k1';
 import * as CryptoJS from 'crypto-js';
 import ECPairFactory from 'ecpair';
 import * as wif from 'wif';
+import { getSessionValue } from '.';
+import { PASSWORD } from '../../shared/constant';
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -94,7 +96,6 @@ export function generateAddressFromPrivateKey(privateKey: string): string {
     pubkey: keyPair.publicKey,
     network,
   });
-  console.log(address, 'generateAddressFromPrivateKey===');
   return address!;
 }
 
@@ -125,4 +126,14 @@ export const decrypt = ({ data, password }: { data: any, password: string }) => 
 
 export const hash = (password: any) => {
   return CryptoJS.SHA256(password).toString();
+};
+
+export const validatePassword = async (password: any): Promise<boolean> => {
+  try {
+    const value = await getSessionValue(PASSWORD);
+    return value && value === password;
+  } catch (error) {
+    console.error('Error fetching session value:', error);
+    return false;
+  }
 };

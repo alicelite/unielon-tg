@@ -25,10 +25,11 @@ const WelcomeScreen = () => {
               text="Create new wallet"
               preset="primary"
               onClick={async () => {
+                
                 if (isBooted) {
-                  navigate('account/create-hd-wallet', { isImport: false } as NavigateOptions);
+                  navigate('account/create-hd-wallet', { state: { isImport: false } } as NavigateOptions);
                 } else {
-                  navigate('account/create-password', { isNewAccount: true } as NavigateOptions & { isNewAccount: boolean });
+                  navigate('account/create-password', { state: { isNewAccount: true } } as NavigateOptions & { isNewAccount: boolean });
                 }
               }}
             />
@@ -37,9 +38,9 @@ const WelcomeScreen = () => {
               preset="default_"
               onClick={async () => {
                 if (isBooted) {
-                  navigate('account/create-hd-wallet', { isImport: true } as NavigateOptions);
+                  navigate('account/create-hd-wallet', { state: { isImport: true } } as NavigateOptions);
                 } else {
-                  navigate('account/create-password', { isNewAccount: false } as NavigateOptions & { isNewAccount: boolean });
+                  navigate('account/create-password', { state: { isNewAccount: false } } as NavigateOptions & { isNewAccount: boolean });
                 }
               }}
             />

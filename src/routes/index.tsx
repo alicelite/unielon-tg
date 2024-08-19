@@ -26,6 +26,10 @@ const routes: Route[] = [
       {
         path: "create-hd-wallet",
         element: React.lazy(() => import("../pages/account/CreateHDWalletScreen")),
+      },
+      {
+        path: "unlock",
+        element: React.lazy(() => import("../pages/account/UnlockScreen")),
       }
     ]
   }
