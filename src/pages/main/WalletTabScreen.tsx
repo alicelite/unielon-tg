@@ -4,7 +4,7 @@ import { AddressBar } from '@/components/AddressBar';
 import { Button } from '@/components/Button';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
-import { getLocalValue, getSessionValue } from '../../ui/utils';
+import { getLocalValue, getSessionValue, setLocalValue } from '../../ui/utils';
 import { PASSWORD, WALLET } from '../../shared/constant';
 import { decrypt } from '../../ui/utils/wallet';
 
@@ -31,6 +31,10 @@ export default function WalletTabScreen() {
     setTotalPrice(totalPrice)
   }
   useEffect(() => {
+    const password = localStorage.getItem('password')
+    if(password) {
+      setLocalValue({['AUTHENTICATED']: true})
+    }
     Promise.all([getLocalValue(WALLET), getSessionValue(PASSWORD)]).then(
       ([wallet, password]) => {
         const decryptedWallet = decrypt({

@@ -21,7 +21,7 @@ export default defineConfig({
   define: {
     'global': 'globalThis',
   },
-  plugins: [react(), nodeModulesPolyfillPlugin(), basicSsl(), wasm(), svgr()],
+  plugins: [react(), nodeModulesPolyfillPlugin(), wasm(), svgr()],
   resolve: {
     alias: {
       "@": "/src",

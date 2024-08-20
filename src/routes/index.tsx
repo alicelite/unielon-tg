@@ -6,10 +6,19 @@ interface Route {
   children?: Route[];
 }
 
+const getRootElement = () => {
+  const password = localStorage.getItem('password');
+  if (password) {
+    return React.lazy(() => import("../pages/account/UnlockScreen"));
+  } else {
+    return React.lazy(() => import("../pages/main/WelcomeScreen"));
+  }
+};
+
 const routes: Route[] = [
   {
     path: "/",
-    element: React.lazy(() => import("../pages/main/WelcomeScreen")),
+    element: getRootElement(),
   },
   {
     path: "/home",

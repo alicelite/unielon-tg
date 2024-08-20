@@ -5,8 +5,6 @@ import * as ecc from 'tiny-secp256k1';
 import * as CryptoJS from 'crypto-js';
 import ECPairFactory from 'ecpair';
 import * as wif from 'wif';
-import { getSessionValue } from '.';
-import { PASSWORD } from '../../shared/constant';
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -130,8 +128,8 @@ export const hash = (password: any) => {
 
 export const validatePassword = async (password: any): Promise<boolean> => {
   try {
-    const value = await getSessionValue(PASSWORD);
-    return value && value === password;
+    const value = localStorage.getItem('password');
+    return value !== null && Number(value) == password;
   } catch (error) {
     console.error('Error fetching session value:', error);
     return false;
