@@ -15,6 +15,11 @@ import { TabBar } from './TabBar';
 import { Footer } from './Footer';
 import { AddressBar } from './AddressBar';
 import { FooterButtonContainer } from './FooterButtonContainer';
+import { FeeRateBar } from './FeeRateBar';
+import { AddressText } from './AddressText';
+import { AccordingInscription } from './AccordingInscription';
+import { AddressDetailPopover } from './AddressDetailPopover';
+
 export {
   Button,
   Footer,
@@ -32,5 +37,9 @@ export {
   Grid,
   TabBar,
   AddressBar,
-  FooterButtonContainer
+  FooterButtonContainer,
+  FeeRateBar,
+  AddressText,
+  AccordingInscription,
+  AddressDetailPopover
 };

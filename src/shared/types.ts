@@ -54,12 +54,31 @@ export interface TokenBalance {
 
 export interface Account {
   type: string;
-  pubkey: string;
+  pubkey?: string;
   address: string;
   brandName?: string;
   alianName?: string;
   displayBrandName?: string;
   index?: number;
   balance?: number;
-  key: string;
+  key?: string;
+  mnemonics?: string;
+}
+
+export interface Utxo {
+  txid: string;
+  address: string;
+  vout: number;
+  value: number;
+  outputIndex?: number;
+  satoshis?: number;
+  script?: string;
+  txId?: string;
+}
+export interface UnspentOutputs {
+  utxo: Utxo[];
+}
+export interface ToAddressInfo {
+  address: string;
+  domain?: string;
 }

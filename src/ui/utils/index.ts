@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 export const copyToClipboard = (textToCopy: string | number) => {
   if (navigator.clipboard && window.isSecureContext) {
     return navigator.clipboard.writeText(textToCopy.toString());
@@ -47,3 +48,23 @@ export const getSessionValue = (key: any) => {
   const value = JSON.parse(sessionStorage.getItem(key) as string);
   return Promise.resolve(value);
 };
+
+export function satoshisToAmount(val: any) {
+  const num = new BigNumber(val);
+  return num.dividedBy(100000000).toFixed(8);
+}
+
+export function amountToSaothis(val: any) {
+  const num = new BigNumber(val);
+  return num.multipliedBy(100000000).toNumber();
+}
+
+export function satoshisToDOGE(val: any): BigNumber {
+  const num = new BigNumber(val);
+  return num.dividedBy(100000000);
+}
+
+export function isValidAddress(address: string) {
+  if (!address) return false;
+  return true;
+}

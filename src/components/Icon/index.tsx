@@ -2,16 +2,24 @@ import React, { CSSProperties } from 'react';
 
 import { ColorTypes, colors } from '../../ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
+import eyeSlashIcon from "@/assets/images/eye-slash.svg"
+import eyeIcon from "@/assets/images/eye.svg"
+import copyIcon from "@/assets/images/copy-solid.svg"
+import qrcodeIcon from "@/assets/images/qrcode.svg" 
+import sendIcon from "@/assets/images/send.svg" 
+import historyIcon from "@/assets/images/history.svg" 
+import dogeIcon from "@/assets/images/wallet-logo.png"
+import successIcon from "@/assets/images/success.svg"
 
 export const svgRegistry = {
-  history: './images/icons/clock-solid.svg',
+  history: historyIcon,
   merge: './images/icons/bx-merge.svg',
   pending: './images/icons/transfer-pending.svg',
   refresh: './images/icons/refresh.svg',
   search: './images/icons/search.svg',
-  send: './images/icons/arrow-left-right.svg',
+  send: sendIcon,
   swap: './images/icons/swap-fill.svg',
-  receive: './images/icons/qrcode.svg',
+  receive: qrcodeIcon,
   trade: './images/icons/trade1.svg',
   add: './images/icons/addition.svg',
   'right-arrow': './images/icons/arrow-up-right.svg',
@@ -23,21 +31,20 @@ export const svgRegistry = {
   twitter: './images/icons/twitter.svg',
   // github: './images/icons/github.svg',
 
-  doge: './images/icons/wallet-logo.png',
+  doge: dogeIcon,
   qrcode: './images/icons/qrcode.svg',
 
   user: '/images/icons/user-solid.svg',
   wallet: '/images/icons/wallet-solid.svg',
-  // compass: './images/icons/compass-solid.svg',
   settings: './images/icons/gear-solid.svg',
   grid: './images/icons/grid-solid.svg',
 
   delete: '/images/icons/delete.svg',
-  success: '/images/icons/success.svg',
+  success: successIcon, 
   check: '/images/icons/check.svg',
-  eye: '/images/icons/eye.svg',
-  'eye-slash': '../../../assets/images/eye-slash.svg',
-  copy: './images/icons/copy-solid.svg',
+  eye: eyeIcon,
+  'eye-slash': eyeSlashIcon,
+  copy: copyIcon,
   transfer: './images/icons/transfer.svg',
   close: './images/icons/xmark.svg',
 

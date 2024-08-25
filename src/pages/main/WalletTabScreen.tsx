@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Column, Content, Header, Layout, Row, Text } from '../../components';
-import { AddressBar } from '@/components/AddressBar';
-import { Button } from '@/components/Button';
+import { Column, Content, Header, Layout, Row, Text, AddressBar, Button } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
-import { getLocalValue, getSessionValue, setLocalValue } from '../../ui/utils';
-import { PASSWORD, WALLET } from '../../shared/constant';
-import { decrypt } from '../../ui/utils/wallet';
+import { setLocalValue } from '@/ui/utils';
+import { decryptWallet } from '@/ui/utils/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAppDispatch } from '@/ui/state/hooks';
 
 export default function WalletTabScreen() {
   const [totalPrice, setTotalPrice] = useState(0)
+  const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const [balance, setBalance] = useState()
   const [address, setAddress] = useState()
@@ -18,6 +18,11 @@ export default function WalletTabScreen() {
     const balance = res?.balance?.toFixed(4) ?? 0;
     getDogePriceInfo(balance)
     setBalance(balance)
+    if(!address) return
+    dispatch(accountActions.setBalance({
+        address: address,
+        amount: balance
+    }));
   };
   useEffect(() => {
     if(address) {
@@ -30,20 +35,16 @@ export default function WalletTabScreen() {
     const totalPrice = Number(dogePrice?.last) * Number(balance)
     setTotalPrice(totalPrice)
   }
+  const getDecryptWallet = async () => {
+    const wallet: any = await decryptWallet()
+    setAddress(wallet.addresses)
+  }
   useEffect(() => {
     const password = localStorage.getItem('password')
     if(password) {
       setLocalValue({['AUTHENTICATED']: true})
     }
-    Promise.all([getLocalValue(WALLET), getSessionValue(PASSWORD)]).then(
-      ([wallet, password]) => {
-        const decryptedWallet = decrypt({
-          data: wallet,
-          password,
-        });
-        setAddress(decryptedWallet?.addresses[0]);
-        console.log('decryptedWallet', decryptedWallet, decryptedWallet?.addresses );
-      })
+    getDecryptWallet()
   }, [])
   return (
     <Layout>
@@ -67,7 +68,7 @@ export default function WalletTabScreen() {
               preset="default"
               icon="receive"
               onClick={() => {
-                navigate('ReceiveScreen');
+                navigate('/receive');
               }}
               full
             />
@@ -76,7 +77,7 @@ export default function WalletTabScreen() {
               preset="default"
               icon="send"
               onClick={() => {
-                navigate('TxCreateScreen');
+                navigate('/tx-create');
               }}
               full
             />
@@ -95,3 +96,4 @@ export default function WalletTabScreen() {
     </Layout>
   );
 }
+

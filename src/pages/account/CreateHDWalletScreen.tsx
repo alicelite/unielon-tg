@@ -13,7 +13,9 @@ import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from "react-router-dom"
 import { useGlobalState } from '../../Context';
 import { generatePhrase } from '../../ui/utils/wallet';
-import { createAndStoreWallet } from '../../ui/utils/hooks';
+import { createAndStoreWallet, generateAccount } from '../../ui/utils/hooks';
+import { useAppDispatch } from '../../ui/state/hooks';
+import { accountActions } from '../../ui/state/accounts/reducer';
 function Step0({
   updateContextData
 }: {
@@ -46,9 +48,7 @@ function Step1_Create({
   const tools = useTools();
   const [mnemonicWords, setMnemonicWords] = useState<string[]>([])
   const [phrase, setPhrase] = useState('')
-  const { state, dispatch } = useGlobalState();
-  const { password } = state;
-
+  const { dispatch } = useGlobalState();
   const onChange = (e: CheckboxChangeEvent) => {
     const val = e.target.checked;
     setChecked(val);
@@ -62,8 +62,9 @@ function Step1_Create({
   }
 
   const btnClick = async () => {
-    const address = await createAndStoreWallet(phrase, password, dispatch);
+    const address = await generateAccount(phrase, dispatch);
     updateContextData({
+      mnemonics: phrase,
       address,
       tabType: TabType.STEP2
     });
@@ -135,8 +136,7 @@ function Step1_Import({
   const [keys, setKeys] = useState<Array<string>>(new Array(12).fill(''));
   const [curInputIndex] = useState(0);
   const [disabled, setDisabled] = useState(true);
-  const { state, dispatch } = useGlobalState();
-  const { password } = state;
+  const { dispatch } = useGlobalState();
   const handleEventPaste = (event: { clipboardData: { getData: (arg0: string) => any; }; preventDefault: () => void; }, index: number) => {
     const copyText = event.clipboardData?.getData('text/plain');
     const textArr = copyText.trim().split(' ');
@@ -182,7 +182,7 @@ function Step1_Import({
 
   const onNext = async () => {
     const mnemonics = keys.join(' ');
-    const address = await createAndStoreWallet(mnemonics, password, dispatch);
+    const address = await generateAccount(mnemonics, dispatch);
     updateContextData({ mnemonics, address, tabType: TabType.STEP3 });
   };
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -249,8 +249,9 @@ function Step2({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  // const wallet = useWallet();
   const tools = useTools();
+  const { state } = useGlobalState();
+  const { password } = state;
   const hdPathOptions = useMemo(() => {
     const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
     return ADDRESS_TYPES.filter((v: { displayIndex: number; value: any; }) => {
@@ -260,15 +261,6 @@ function Step2({
       if (!restoreWallet.addressTypes.includes(v.value)) {
         return false;
       }
-
-      // if (!contextData.isRestore) {
-      //   return false;
-      // }
-
-      // if (contextData.customHdPath) {
-      //   return false;
-      // }
-
       return true;
     })
       .sort((a: { displayIndex: number; }, b: { displayIndex: number; }) => a.displayIndex - b.displayIndex)
@@ -290,7 +282,7 @@ function Step2({
 
   const [error, setError] = useState('');
   const [loading] = useState(false);
-
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [hdPathOptionsList, sethdPathOptionsList] = useState<any[]>()
   const [pathText, setPathText] = useState(contextData.customHdPath);
@@ -316,6 +308,14 @@ function Step2({
   };
 
   const onNext = async () => {
+    const { address, mnemonics, isImport = false } = contextData;
+    const account = {
+      address: address,
+      mnemonics: mnemonics,
+      type: isImport ? 'Simple Key Pair' : 'HD Key Tree'
+    }
+    dispatch(accountActions.setCurrent(account));
+    await createAndStoreWallet(mnemonics, password, isImport, dispatch);
     try {
       navigate('/home');
     } catch (e) {
@@ -435,6 +435,7 @@ interface ContextData {
   isCustom: boolean;
   customHdPath: string;
   addressTypeIndex: number;
+  isImport?: boolean;
 }
 
 interface UpdateContextDataParams {
@@ -465,6 +466,7 @@ export default function CreateHDWalletScreen() {
     isCustom: false,
     customHdPath: '',
     address: '',
+    isImport: isImport,
     addressTypeIndex: 0
   });
 

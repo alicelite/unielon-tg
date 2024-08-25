@@ -6,7 +6,8 @@ import { Buffer } from 'buffer';
 import { ActionComponentProvider } from '@/components/ActionComponent';
 import { GlobalStateProvider } from './Context.tsx';
 import { Provider } from 'react-redux';
-import store from './ui/state/index.ts';
+import { store, persistor } from './ui/state/index.ts';
+import { PersistGate } from 'redux-persist/integration/react';
 window.Buffer = Buffer;
 window.global = window.globalThis;
 WebApp.ready();
@@ -15,7 +16,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
     <GlobalStateProvider>
       <ActionComponentProvider>
-        <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
      </ActionComponentProvider>
     </GlobalStateProvider>
     </Provider>

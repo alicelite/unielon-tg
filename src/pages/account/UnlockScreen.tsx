@@ -2,22 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import { Column, Content, Layout, Row, Button, Input, Logo, Text } from '@/components';
 import { useTools } from '@/components/ActionComponent';
-// import { useUnlockCallback } from '@/ui/state/global/hooks';
-// import { getUiType, useWallet } from '@/ui/utils';
 import { useNavigate } from 'react-router-dom';
 import { validatePassword } from '../../ui/utils/wallet';
 
 export default function UnlockScreen() {
-  // const wallet = useWallet();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
-  // const UIType = getUiType();
-  // const isInNotification = UIType.isNotification;
-  // const unlock = useUnlockCallback();
   const tools = useTools();
   const btnClick = async () => {
-    // run(password);
     try {
       const isValidated = await validatePassword(password);
       if(!isValidated) {

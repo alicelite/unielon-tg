@@ -86,6 +86,19 @@ export function generatePrivateKey(child: any) {
   return wifKey;
 }
 
+export function getPrivateKey(mnemonics: any) {
+  const root = generateRoot(mnemonics);
+  const child = generateChild(root, 0);
+  const privateKeyBuffer = child.privateKey;
+  const wifObject: WIF = {
+    version: network.wif,
+    privateKey: privateKeyBuffer,
+    compressed: true,
+  };
+  const privateKey = wif.encode(wifObject);
+  return privateKey;
+}
+
 export function generateAddressFromPrivateKey(privateKey: string): string {
   const decoded = wif.decode(privateKey);
   const privateKeyBuffer = Buffer.from(decoded.privateKey);

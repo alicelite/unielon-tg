@@ -48,6 +48,9 @@ export const NETWORK_TYPES = [
   { value: NetworkType.MAINNET, label: 'LIVENET', name: 'livenet', validNames: [0, 'livenet', 'mainnet'] },
   { value: NetworkType.TESTNET, label: 'TESTNET', name: 'testnet', validNames: ['testnet'] }
 ];
+export const blockstreamUrl = 'https://blockchair.com/dogecoin'
+
+export const COIN_DUST = 1000000;
 
 export const OPENAPI_URL_MAINNET = 'https://unielon.com';
 export const OPENAPI_URL_TESTNET = 'https://future-api.unielon.com';
@@ -56,4 +59,4 @@ export const DISCORD_URL = 'https://discord.gg/unielonwallet';
 export const TWITTER_URL = 'https://twitter.com/unielonwallet';
 export const CARDINALS_API_V3_URL = 'https://unielon.com/v3';  
 export const CARDINALS_API_URL = 'https://utxo.unielon.com';
-export const GATE_API_URL = 'https://data.gateapi.io';
+export const BLOCKCYPHER_URL = 'https://api.blockcypher.com/v1';

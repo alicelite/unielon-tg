@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export enum WalletTabScreenTabKey {
-  // ALL,
   DRC20,
   NFTs,
   Files
