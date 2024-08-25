@@ -1,14 +1,13 @@
 import QRCode from 'qrcode.react';
-import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { Content, Header, Text, AddressBar, Icon, Layout, Column, Row } from '@/components';
 import { sizes } from '@/ui/theme/spacing';
 
 import './index.less';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 
 export default function ReceiveScreen() {
   const currentAccount = useCurrentAccount();
-  console.log(currentAccount.balance, 'currentAccount===')
-  const address = useAccountAddress();
+  const { address } = currentAccount;
 
   return (
     <Layout>

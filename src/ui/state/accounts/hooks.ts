@@ -8,6 +8,7 @@ export function useAccountsState(): AppState['accounts'] {
 
 export function useCurrentAccount() {
   const accountsState = useAccountsState();
+  console.log(accountsState, 'accountsState====')
   return accountsState.current;
 }
 

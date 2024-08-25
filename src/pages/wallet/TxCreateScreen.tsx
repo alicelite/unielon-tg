@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { COIN_DUST } from '@/shared/constant';
 import { Layout, Content, Button, Header, Icon, Text, Input, Column, Row, FeeRateBar } from '@/components';
 import { useNavigate } from 'react-router-dom';
-import { useAccountBalance } from '@/ui/state/accounts/hooks';
 import {
   useCreateDogecoinTxCallback,
 } from '@/ui/state/transactions/hooks';
@@ -13,9 +12,11 @@ import { getUtoxsInfo } from '@/shared/cardinals';
 import { UnspentOutputs } from '../../shared/types';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useCurrentAccount } from '../../ui/state/accounts/hooks';
 
 export default function TxCreateScreen() {
-  const accountBalance = useAccountBalance();
+  const currentAccount = useCurrentAccount();
+  const { balance } = currentAccount;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [inputAmount, setInputAmount] = useState('');
@@ -32,7 +33,7 @@ export default function TxCreateScreen() {
   const [autoAdjust, setAutoAdjust] = useState(false);
   const tools = useTools();
   const createDogecoinTx = useCreateDogecoinTxCallback();
-  const safeBalance = useMemo(() => amountToSaothis(accountBalance.amount) - feeRate, [accountBalance.amount, feeRate]);
+  const safeBalance = useMemo(() => amountToSaothis(balance) - feeRate, [balance, feeRate]);
   const toSatoshis = useMemo(() => (inputAmount ? amountToSaothis(inputAmount) : 0), [inputAmount]);
   const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), []);
 
@@ -59,9 +60,9 @@ export default function TxCreateScreen() {
     return unspentOutputs.utxo;
   };
   const showAvailableBalance = useMemo(() => {
-    const isShowAvailableBalance = amountToSaothis(accountBalance.amount) < amountToSaothis(inputAmount) + feeRate
+    const isShowAvailableBalance = amountToSaothis(balance) < amountToSaothis(inputAmount) + feeRate
     return isShowAvailableBalance;
-  } , [inputAmount, feeRate, accountBalance.amount]);
+  } , [inputAmount, feeRate, balance]);
   useEffect(() => {
     setDisabled(showAvailableBalance)
   } ,[showAvailableBalance])
@@ -86,11 +87,11 @@ export default function TxCreateScreen() {
     }
   };
   useEffect(() => {
-    if (inputAmount > accountBalance.amount) {
+    if (+inputAmount > +(balance ?? 0)) {
       setError('Amount exceeds your available balance');
       return;
     }
-  }, [inputAmount, accountBalance.amount])
+  }, [inputAmount, balance])
   return (
     <Layout>
       <Header onBack={() => window.history.go(-1)} title="Send DOGE" />
@@ -115,7 +116,7 @@ export default function TxCreateScreen() {
                   itemsCenter
                   style={{ gap: 4 }}
                 >
-                  <Text text={`${accountBalance.amount} DOGE`} preset="bold" size="sm" />
+                  <Text text={`${balance} DOGE`} preset="bold" size="sm" />
                 </Row>
             </Row>
 
