@@ -18,7 +18,7 @@ const initialAccount = {
   index: 0,
   balance: 0,
   pubkey: '',
-  key: ''
+  key: '',
 };
 
 export const initialState: AccountsState = {
@@ -56,12 +56,15 @@ const slice = createSlice({
       const {
         payload: { address, amount }
       } = action;
+      console.log(state.balanceMap[address], 'state.balanceMap[address]')
       state.balanceMap[address] = state.balanceMap[address] || {
         amount: '0',
         expired: true
       };
+      state.current.balance = Number(amount);
       state.balanceMap[address].amount = amount;
       state.balanceMap[address].expired = false;
+      console.log(state, '====state')
     },
     expireBalance(state) {
       const balance = state.balanceMap[state.current.address];

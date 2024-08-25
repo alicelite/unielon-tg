@@ -7,6 +7,7 @@ import './index.less';
 
 export default function ReceiveScreen() {
   const currentAccount = useCurrentAccount();
+  console.log(currentAccount.balance, 'currentAccount===')
   const address = useAccountAddress();
 
   return (
