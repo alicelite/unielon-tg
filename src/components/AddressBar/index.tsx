@@ -9,6 +9,7 @@ import { Text } from '../Text';
 export function AddressBar() {
   const tools = useTools();
   const address = useAccountAddress();
+  console.log('address----useAccountAddress', address)
   return (
     <Row
       selfItemsCenter

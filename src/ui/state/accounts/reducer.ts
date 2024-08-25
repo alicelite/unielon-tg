@@ -52,6 +52,7 @@ const slice = createSlice({
         };
       }
     ) {
+      console.log(action, 'action----')
       const {
         payload: { address, amount }
       } = action;

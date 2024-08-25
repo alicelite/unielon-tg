@@ -19,6 +19,7 @@ export default function WalletTabScreen() {
     getDogePriceInfo(balance)
     setBalance(balance)
     if(!address) return
+    console.log('balance----', balance)
     dispatch(accountActions.setBalance({
         address: address,
         amount: balance

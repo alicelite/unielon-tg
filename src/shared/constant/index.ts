@@ -60,3 +60,4 @@ export const TWITTER_URL = 'https://twitter.com/unielonwallet';
 export const CARDINALS_API_V3_URL = 'https://unielon.com/v3';  
 export const CARDINALS_API_URL = 'https://utxo.unielon.com';
 export const BLOCKCYPHER_URL = 'https://api.blockcypher.com/v1';
+export const GATEAPI_URL = 'https://data.gateapi.io';

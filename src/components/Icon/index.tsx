@@ -121,6 +121,7 @@ export function Icon(props: IconProps) {
     );
   }
   const iconPath = svgRegistry[icon as IconTypes];
+  console.log('iconPath----', iconPath)
   if (iconImgList.includes(icon)) {
     return (
       <img

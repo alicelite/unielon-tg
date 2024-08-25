@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://data.gateapi.io',
+        target: process.env.VITE_API_BASE_URL,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
@@ -21,7 +21,7 @@ export default defineConfig({
   define: {
     'global': 'globalThis',
   },
-  plugins: [react(), nodeModulesPolyfillPlugin(), basicSsl(), wasm(), svgr()],
+  plugins: [react(), nodeModulesPolyfillPlugin(), wasm(), svgr()],
   resolve: {
     alias: {
       "@": "/src",
