@@ -16,6 +16,7 @@ import { useAppDispatch } from '@/ui/state/hooks';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
+  console.log(accountBalance, 'accountBalance')
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [inputAmount, setInputAmount] = useState('');
