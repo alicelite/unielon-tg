@@ -1,14 +1,14 @@
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
-
 import { useTools } from '../ActionComponent';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 
 export function AddressBar() {
   const tools = useTools();
-  const address = useAccountAddress();
+  const currentAccount = useCurrentAccount();
+  const { address } = currentAccount;
   console.log('address----useAccountAddress', address)
   return (
     <Row

@@ -12,9 +12,6 @@ export default function ReceiveScreen() {
   return (
     <Layout>
       <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
         title="Receive Address"
       />
       <Content>

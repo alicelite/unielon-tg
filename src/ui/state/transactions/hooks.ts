@@ -18,6 +18,7 @@ export function useDogecoinTx() {
 export function useCreateDogecoinTxCallback() {
   const dispatch = useAppDispatch();
   const currentAccount = useCurrentAccount();
+  console.log(currentAccount, 'currentAccount====useCreateDogecoinTxCallback')
   const utxos = useUtxos();
   return useCallback(
     async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate: number) => {
@@ -32,6 +33,7 @@ export function useCreateDogecoinTxCallback() {
           privateKey: yourPrivateKeyWIF
         }
       })
+      console.log(toAddressInfo, 'toAddressInfo====')
       const commitTxPrevOutputList: PrevOutput[] = [];
       commitTxPrevOutputList.push(...unspentOutputs);
 
@@ -40,7 +42,9 @@ export function useCreateDogecoinTxCallback() {
             revealAddr: toAddressInfo.address,
             amount: toAmount
         });
-
+        console.log(commitTxPrevOutputList, 'commitTxPrevOutputList====')
+        console.log(transactionDataList, 'transactionDataList====')
+        console.log(address, 'address====')
         const request = {
             commitTxPrevOutputList,
             commitFeeRate: 50000,
