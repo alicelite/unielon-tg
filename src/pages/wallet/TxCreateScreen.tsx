@@ -7,7 +7,6 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 import { useTools } from '@/components/ActionComponent';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { getUtoxsInfo } from '@/shared/cardinals';
 import { UnspentOutputs } from '../../shared/types';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
