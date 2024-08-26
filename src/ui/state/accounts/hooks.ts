@@ -8,7 +8,6 @@ export function useAccountsState(): AppState['accounts'] {
 
 export function useCurrentAccount() {
   const accountsState = useAccountsState();
-  console.log(accountsState, 'accountsState====useCurrentAccount')
   return accountsState.current;
 }
 
@@ -20,7 +19,6 @@ export function useAccounts() {
 export function useAccountBalance() {
   const accountsState = useAccountsState();
   const currentAccount = useCurrentAccount();
-  console.log(accountsState.balanceMap, 'accountsState===')
   return accountsState.balanceMap[currentAccount.address] || { amount: '0', expired: true };
 }
 

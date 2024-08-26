@@ -135,7 +135,6 @@ export const AddressInput = (props: InputProps) => {
       setValidAddress(inputAddress)
     } catch(err) {
       setFormatError('Recipient address is invalid')
-      console.log(err)
     }
   };
 

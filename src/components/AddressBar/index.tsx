@@ -9,7 +9,6 @@ export function AddressBar() {
   const tools = useTools();
   const currentAccount = useCurrentAccount();
   const { address } = currentAccount;
-  console.log('address----useAccountAddress', address)
   return (
     <Row
       selfItemsCenter

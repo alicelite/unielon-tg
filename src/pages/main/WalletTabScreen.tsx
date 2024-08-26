@@ -6,7 +6,6 @@ import { setLocalValue } from '@/ui/utils';
 import { decryptWallet } from '@/ui/utils/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-
 export default function WalletTabScreen() {
   const [totalPrice, setTotalPrice] = useState(0)
   const dispatch = useAppDispatch();
@@ -19,7 +18,6 @@ export default function WalletTabScreen() {
     getDogePriceInfo(balance)
     setBalance(balance)
     if(!address) return
-    console.log('balance----', balance)
     dispatch(accountActions.setBalance({
         address: address,
         amount: balance

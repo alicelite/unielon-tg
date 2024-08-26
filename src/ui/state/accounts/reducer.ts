@@ -37,7 +37,6 @@ const slice = createSlice({
     },
     setCurrent(state, action: { payload: Account }) {
       const { payload } = action;
-      console.log(payload, 'payload====setCurrent')
       state.current = payload || initialAccount;
     },
     setAccounts(state, action: { payload: Account[] }) {
@@ -53,11 +52,9 @@ const slice = createSlice({
         };
       }
     ) {
-      console.log(action, 'action----')
       const {
         payload: { address, amount }
       } = action;
-      console.log(state.balanceMap[address], 'state.balanceMap[address]')
       state.balanceMap[address] = state.balanceMap[address] || {
         amount: '0',
         expired: true
@@ -65,7 +62,6 @@ const slice = createSlice({
       state.current.balance = Number(amount);
       state.balanceMap[address].amount = amount;
       state.balanceMap[address].expired = false;
-      console.log(state, '====state')
     },
     expireBalance(state) {
       const balance = state.balanceMap[state.current.address];

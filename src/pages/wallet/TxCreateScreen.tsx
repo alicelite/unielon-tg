@@ -51,7 +51,6 @@ export default function TxCreateScreen() {
 
   useEffect(validateInputs, [toInfo, inputAmount, autoAdjust, feeRate]);
   const { address } = currentAccount;
-  console.log('address----getUtoxsInfo', address)
   const getUnspentOutputs = async () => {
     const mergAmount = amountToSaothis(inputAmount) + feeRate;
     const unspentOutputs = await getUtoxsInfo(address, mergAmount, '100000000') as UnspentOutputs;
