@@ -13,7 +13,7 @@ import { AiOutlineEye } from "react-icons/ai";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon,
-  delete: '/images/icons/delete.svg',
+  delete: '/images/icons/delete.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'doge'];
@@ -96,7 +96,11 @@ export function Icon(props: IconProps) {
 
   const IconComponent = iconComponents[icon as IconTypes];
   if (IconComponent) {
-    return <IconComponent color={color ? colors[color] : 'white'} />;
+    return (
+      <div onClick={onClick}>
+        <IconComponent color={color ? colors[color] : 'white'} />
+      </div>
+    )
   }
 
   const iconPath = svgRegistry[icon as keyof typeof svgRegistry];
