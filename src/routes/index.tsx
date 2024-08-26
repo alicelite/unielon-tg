@@ -58,6 +58,10 @@ const routes: Route[] = [
   {
     path: "/receive",
     element: React.lazy(() => import("../pages/wallet/ReceiveScreen")),
+  },
+  {
+    path: "/history",
+    element: React.lazy(() => import("../pages/wallet/HistoryScreen")),
   }
 ];
 

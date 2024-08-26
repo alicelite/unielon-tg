@@ -19,6 +19,7 @@ import { FeeRateBar } from './FeeRateBar';
 import { AddressText } from './AddressText';
 import { AccordingInscription } from './AccordingInscription';
 import { AddressDetailPopover } from './AddressDetailPopover';
+import { RefreshButton } from './RefreshButton';
 
 export {
   Button,
@@ -41,5 +42,6 @@ export {
   FeeRateBar,
   AddressText,
   AccordingInscription,
-  AddressDetailPopover
+  AddressDetailPopover,
+  RefreshButton
 };

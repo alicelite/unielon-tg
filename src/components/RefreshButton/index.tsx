@@ -32,7 +32,7 @@ export function RefreshButton({ onClick }: { onClick: ReactEventHandler<HTMLDivE
         onClick(e);
       }}
     >
-      <ReloadOutlined style={{ fontSize: 12 }} />
+      <ReloadOutlined style={{ fontSize: 12, color: 'white' }} />
       <Text text={disabled ? `${leftTime} secs` : 'refresh'} color="white" size="sm" textCenter />
     </Row>
   );

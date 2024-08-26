@@ -85,7 +85,7 @@ export default function WalletTabScreen() {
               preset="default"
               icon="history"
               onClick={() => {
-                navigate('HistoryScreen');
+                navigate('/history');
               }}
               full
             />
