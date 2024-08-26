@@ -1,27 +1,24 @@
 import React, { CSSProperties } from 'react';
 import { ColorTypes, colors } from '../../ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import eyeSlashIcon from "@/assets/images/eye-slash.svg";
-import eyeIcon from "@/assets/images/eye.svg";
-import copyIcon from "@/assets/images/copy-solid.svg";
 import dogeIcon from "@/assets/images/wallet-logo.png";
 import successIcon from "@/assets/images/success.svg";
 import { BiTransfer } from "react-icons/bi";
 import { FaQrcode } from "react-icons/fa";
 import { AiOutlineHistory } from "react-icons/ai";
+import { IoIosCopy } from "react-icons/io";
+import { PiEyeSlashLight } from "react-icons/pi";
+import { AiOutlineEye } from "react-icons/ai";
 
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon,
-  eye: eyeIcon,
-  'eye-slash': eyeSlashIcon,
-  copy: copyIcon,
   delete: '/images/icons/delete.svg',
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history';
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash';
 
 interface IconProps {
   /**
@@ -60,6 +57,9 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   send: BiTransfer,
   receive: FaQrcode,
   history: AiOutlineHistory,
+  copy: IoIosCopy,
+  eye: AiOutlineEye,
+  "eye-slash": PiEyeSlashLight
 };
 
 export function Icon(props: IconProps) {

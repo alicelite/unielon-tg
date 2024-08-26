@@ -2,7 +2,6 @@ import { useIntegration } from '@telegram-apps/react-router-integration';
 import { initNavigator } from '@telegram-apps/sdk-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  // BrowserRouter,
   Route,
   Router,
   Routes,
@@ -56,17 +55,6 @@ function App() {
     navigator.attach();
     return () => navigator.detach();
   }, [navigator]);
-
-  // if (!location.search) {
-  //   return (
-  //     <BrowserRouter>
-  //       <RedirectHandler />
-  //       <Routes>
-  //         {generateRoutes(routesConfig)}
-  //       </Routes>
-  //     </BrowserRouter>
-  //   )
-  // }
 
   return (
     <Router location={location} navigator={reactNavigator}>
