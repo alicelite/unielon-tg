@@ -24,6 +24,7 @@ export function useCreateDogecoinTxCallback() {
     async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate: number) => {
       const { mnemonics, address } = currentAccount
       const yourPrivateKeyWIF = getPrivateKey(mnemonics)
+      console.log(utxos, 'utxos====')
       const unspentOutputs = utxos.map((item) => {
         return {
           txId: item.txid,

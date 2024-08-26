@@ -37,6 +37,7 @@ const slice = createSlice({
     },
     setCurrent(state, action: { payload: Account }) {
       const { payload } = action;
+      console.log(payload, 'payload====setCurrent')
       state.current = payload || initialAccount;
     },
     setAccounts(state, action: { payload: Account[] }) {
