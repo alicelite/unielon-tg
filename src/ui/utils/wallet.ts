@@ -142,7 +142,7 @@ export const hash = (password: any) => {
 export const validatePassword = async (password: any): Promise<boolean> => {
   try {
     const value = localStorage.getItem('password');
-    return value !== null && Number(value) == password;
+    return value !== null && value == password;
   } catch (error) {
     console.error('Error fetching session value:', error);
     return false;

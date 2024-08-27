@@ -66,15 +66,15 @@ export default function TxCreateScreen() {
   } ,[showAvailableBalance])
   const jumpConfirm = async () => {
     tools.showLoading(true);
-    const unspentOutputs = await getUnspentOutputs();
-    if (unspentOutputs?.length > 600) {
+    const utxos = await getUnspentOutputs();
+    if (utxos?.length > 600) {
       tools.toastError('Please merge utox first');
       return;
     }
     try {
-      const commitTx = await createDogecoinTx(toInfo, toSatoshis, feeRate);
+      const commitTx = await createDogecoinTx(toInfo, toSatoshis, feeRate, utxos);
       if(commitTx) {
-        const rawTxInfo = { commitTx, toAddress: toInfo.address, spendAmount: inputAmount, feeRate };
+        const rawTxInfo = { commitTx, currentAccount: address ,toAddress: toInfo.address, spendAmount: inputAmount, feeRate };
         navigate('/tx-confirm', {state : { rawTxInfo } });
       }
       setDisabled(false);

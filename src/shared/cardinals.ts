@@ -50,13 +50,10 @@ export async function getAddressRecentHistory(address: string, offset: number, l
             outputsResult.push(output.address);
           }
         });
-        console.log(inputsResult, 'inputsResult=====', outputsResult);
         const sendAddress = inputsResult.join(', ');
         const receiveAddress = outputsResult.join(', ');
-        console.log(fee, '===fee');
         return { amount: (amount >= 0 ? '-' : '+') + Math.abs(amount).toFixed(8), txid, fee: fee.toFixed(8), sendAddress, receiveAddress, ...item };
       });
-      console.log(result, 'result=====');
       return result;
     }
   }

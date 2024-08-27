@@ -62,6 +62,7 @@ export interface Account {
   index?: number;
   balance?: number;
   key?: string;
+  phrase: string;
   mnemonics?: string;
 }
 

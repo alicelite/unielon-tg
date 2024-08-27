@@ -97,7 +97,6 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
                 <Icon icon="right-arrow" color={'white'} />
                 <Text text="View Detail" size="xxs" 
                   onClick={() => {
-                    console.log(item, '====item')
                     if(item?.receiveAddress) {
                       // navigate('HistoryDetailScreen', { item });
                     } else {
@@ -131,9 +130,7 @@ export default function HistoryScreen() {
   };
   const getHistory = async () => {
     const broadcastInfo = await getBroadcastInfo(address) as any;
-    console.log(broadcastInfo, 'broadcastInfo======<<>>>>>');
     const _accountHistory: HistoryItem[] = await getAddressRecentHistory(address, page, 30) as HistoryItem[];
-    console.log(_accountHistory, '_accountHistory=====');
     if (!_accountHistory?.length && page === 1) {
       setShowNodata(true);
     }
@@ -156,8 +153,6 @@ export default function HistoryScreen() {
         });
       }
     });
-    console.log(_historyGroups, '_historyGroups======');
-    console.log(historyGroups, 'historyGroups======');
   
     const concatList: any[] = _historyGroups?.length ? [..._historyGroups] : [];
     const result: GroupItem[] = page === 1 ? [].concat(...concatList) : historyGroups?.concat(...concatList) || [];
@@ -167,16 +162,11 @@ export default function HistoryScreen() {
     }, [] as HistoryItem[]);
   
     const compareList = await getNewTransferList(mergedHistoryItems, broadcastInfo, address);
-    console.log('Merged historyItems:', mergedHistoryItems, compareList);
     if (compareList?.length) {
-      console.log(compareList, 'compareList-----')
-      console.log(result, 'result---')
       setHistoryGroups(compareList.concat(...result));
     } else {
-      console.log(2222)
       setHistoryGroups([...result]);
     }
-    console.log(result, 'result=======');
   };
   
   useEffect(() => {

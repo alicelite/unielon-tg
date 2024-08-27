@@ -15,7 +15,7 @@ import { useGlobalState } from '../../Context';
 import { generatePhrase } from '../../ui/utils/wallet';
 import { createAndStoreWallet, generateAccount } from '../../ui/utils/hooks';
 import { useAppDispatch } from '../../ui/state/hooks';
-import { accountActions } from '../../ui/state/accounts/reducer';
+// import { accountActions } from '../../ui/state/accounts/reducer';
 function Step0({
   updateContextData
 }: {
@@ -308,13 +308,7 @@ function Step2({
   };
 
   const onNext = async () => {
-    const { address, mnemonics, isImport = false } = contextData;
-    const account = {
-      address: address,
-      mnemonics: mnemonics,
-      type: isImport ? 'Simple Key Pair' : 'HD Key Tree'
-    }
-    dispatch(accountActions.setCurrent(account));
+    const { mnemonics, isImport = false } = contextData;
     await createAndStoreWallet(mnemonics, password, isImport, dispatch);
     try {
       navigate('/home');

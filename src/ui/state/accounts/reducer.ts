@@ -19,6 +19,7 @@ const initialAccount = {
   balance: 0,
   pubkey: '',
   key: '',
+  phrase: '',
 };
 
 export const initialState: AccountsState = {

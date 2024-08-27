@@ -1,15 +1,16 @@
-import { getLocalValue, setLocalValue, setSessionValue } from ".";
+import { amountToSaothis, getLocalValue, satoshisToDOGE, setLocalValue, setSessionValue } from ".";
 import { PASSWORD, WALLET } from "../../shared/constant";
 import { accountActions } from "../state/accounts/reducer";
 import { decrypt, encrypt, generateAddress, generateChild, generateRoot } from "./wallet";
 
 export const decryptWallet = () => {
   return new Promise((resolve, reject) => {
-    Promise.all([getLocalValue(WALLET), getLocalValue('password')])
-      .then(([wallet, password]) => {
+    Promise.all([getLocalValue(WALLET)])
+      .then(([wallet]) => {
+        const password = localStorage.getItem('password');
         const decryptedWallet = decrypt({
           data: wallet,
-          password: password.toString(),
+          password: password ?? '',
         });
         console.log('Decrypted Wallet:', decryptedWallet);
         resolve(decryptedWallet);
@@ -26,12 +27,15 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   const address = generateAddress(child);
   const localWallet = await decryptWallet();
   const walletList = Array.isArray(localWallet) ? localWallet : [];
+  console.log(walletList.length, 'walletList.length=====')
+  if(!address) return
   const wallet = {
     phrase,
-    addresses: address,
-    nicknames: { [address as string]: 'Address 1' },
-    type: isImport ? 'Simple Key Pair' : 'HD Key Tree'
+    address,
+    type: !isImport ? 'Simple Key Pair' : 'HD Key Tree',
+    alianName: !isImport ?  `Simple Wallet #${walletList.length + 1}`: `HD Wallet #${walletList.length + 1}`
   };
+  dispatch(accountActions.setCurrent(wallet));
   walletList.push(wallet)
  
   dispatch(accountActions.setAccounts(walletList));
@@ -52,11 +56,9 @@ export const generateAccount = async (phrase: any, dispatch: any) => {
 };
 
 export const getNewTransferList = async (historyItems: any[], broadcastInfo: any[], address: string | number) => {
-  console.log(historyItems, broadcastInfo, 'getNewTransferList=======')
   const updatedBroadcastInfo = broadcastInfo.filter(broadcastItem =>
     !historyItems.find(historyItem => historyItem.txid === broadcastItem.txid)
   );
-  console.log('Updated broadcastInfo:', updatedBroadcastInfo)
   setBroadcastInfo(address, updatedBroadcastInfo)
   const data = [
     {
@@ -70,11 +72,9 @@ export const getNewTransferList = async (historyItems: any[], broadcastInfo: any
 
 export const setBroadcastInfo = (address: string | number, infoArray: any) => {
   const infos = Array.isArray(infoArray) ? infoArray : [infoArray];
-  console.log(infoArray, 'infoArray====<<<<<<');
   
   if (!infos?.length) {
     setLocalValue({ broadcastInfo: {}});
-    console.log('broadcastInfo cleared');
     return;
   }
 
@@ -92,17 +92,31 @@ export const setBroadcastInfo = (address: string | number, infoArray: any) => {
     }
   });
 
-  console.log(broadcastInfo, 'broadcastInfo====');
   setLocalValue({ broadcastInfo });
-  console.log('Data stored successfully');
 };
+
+export const broadcastItem = (data: any, txid: string) => {
+  const { currentAccount, feeRate, spendAmount, toAddress } = data
+  const totalSpend = amountToSaothis(spendAmount) + feeRate
+  const result = {
+    receiveAddress: toAddress,
+    sendAddress: currentAccount,
+    symbol: 'DOGE',
+    time: Math.floor(new Date().getTime() / 1000),
+    txid: txid,
+    address: txid,
+    fee: Number(feeRate) / 100000000,
+    amount: satoshisToDOGE(totalSpend)
+  }
+  return {
+    ...result
+  }
+}
 
 export const getBroadcastInfo = (address: string) => {
   return new Promise((resolve) => {
     const storedData = localStorage.getItem('broadcastInfo');
-    console.log(storedData, 'storedData====', typeof storedData);
     const broadcastInfo = storedData ? JSON.parse(storedData) : {};
-    console.log(broadcastInfo, 'broadcastInfo===')
     const data = broadcastInfo[address] || {};
     if (data && data.broadcastItem) {
       resolve(data.broadcastItem);

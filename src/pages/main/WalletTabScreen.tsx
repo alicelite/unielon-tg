@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Column, Content, Header, Layout, Row, Text, AddressBar, Button } from '@/components';
+import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
 import { setLocalValue } from '@/ui/utils';
 import { decryptWallet } from '@/ui/utils/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 export default function WalletTabScreen() {
   const [totalPrice, setTotalPrice] = useState(0)
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const [balance, setBalance] = useState()
   const [address, setAddress] = useState()
+  const currentAccount = useCurrentAccount()
   const balanceValue = async () => {
     const res =  await getBalance(address);
     const balance = res?.balance?.toFixed(4) ?? 0;
@@ -36,7 +38,7 @@ export default function WalletTabScreen() {
   }
   const getDecryptWallet = async () => {
     const wallet: any = await decryptWallet()
-    setAddress(wallet.addresses)
+    setAddress(wallet.address)
   }
   useEffect(() => {
     const password = localStorage.getItem('password')
@@ -47,9 +49,22 @@ export default function WalletTabScreen() {
   }, [])
   return (
     <Layout>
-      <Header/>
+      <Header RightComponent={
+          <Card
+            style={{
+              paddingLeft: '8px',
+              paddingRight: '8px'
+            }}
+            preset="style2"
+            onClick={() => {
+              // navigate('/account/switch-keyring');
+            }}
+          >
+            <Text text={currentAccount.alianName} size="xxs" />
+          </Card>
+        }/>
       <Content>
-        <Column style={{ marginTop: '16px', gap: '16px' }}>
+        <Column style={{ gap: '16px' }}>
           <AddressBar />
           <Row style={{gap: 0}} justifyCenter>
             <Text text={balance} textCenter size="xxxl" />

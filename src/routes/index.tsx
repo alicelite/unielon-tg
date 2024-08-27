@@ -40,6 +40,10 @@ const routes: Route[] = [
       {
         path: "unlock",
         element: React.lazy(() => import("../pages/account/UnlockScreen")),
+      },
+      {
+        path: "switch-keyring",
+        element: React.lazy(() => import("../pages/account/SwitchKeyringScreen")),
       }
     ]
   },
