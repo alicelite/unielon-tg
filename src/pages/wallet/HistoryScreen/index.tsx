@@ -134,7 +134,7 @@ export default function HistoryScreen() {
     console.log(broadcastInfo, 'broadcastInfo======<<>>>>>');
     const _accountHistory: HistoryItem[] = await getAddressRecentHistory(address, page, 30) as HistoryItem[];
     console.log(_accountHistory, '_accountHistory=====');
-    if (!_accountHistory?.length) {
+    if (!_accountHistory?.length && page === 1) {
       setShowNodata(true);
     }
     if (_accountHistory?.length < 10) {
