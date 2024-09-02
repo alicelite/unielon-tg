@@ -6,7 +6,8 @@ import {
   CARDINALS_API_V3_URL,
   CARDINALS_API_URL,
   BLOCKCYPHER_URL,
-  GATEAPI_URL
+  GATEAPI_URL,
+  CARDINALS_API_V4_URL
 } from './shared/constant';
 
 const retryOptions = retry({
@@ -23,6 +24,11 @@ const retryOptions = retry({
 export const cardinalsV3 = wretch(CARDINALS_API_V3_URL).middlewares([
   retryOptions,
 ]);
+
+export const cardinalsV4 = wretch(CARDINALS_API_V4_URL).middlewares([
+  retryOptions,
+]);
+
 export const cardinals = wretch(CARDINALS_API_URL).middlewares([
   retryOptions,
 ]);

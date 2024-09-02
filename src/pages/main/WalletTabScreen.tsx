@@ -57,7 +57,7 @@ export default function WalletTabScreen() {
             }}
             preset="style2"
             onClick={() => {
-              // navigate('/account/switch-keyring');
+              navigate('/account/switch-keyring');
             }}
           >
             <Text text={currentAccount.alianName} size="xxs" />

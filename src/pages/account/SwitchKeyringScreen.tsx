@@ -1,7 +1,6 @@
-// import VirtualList from 'rc-virtual-list';
-import { useState } from 'react';
+import VirtualList from 'rc-virtual-list';
+import { useMemo, useState, forwardRef } from 'react';
 
-// import { KEYRING_TYPE } from '@/shared/constant';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/components';
 import {
   EditOutlined,
@@ -10,64 +9,37 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { colors } from '../../ui/theme/colors';
-// import { useTools } from '@/components/ActionComponent';
 import { useAccounts } from '../../ui/state/accounts/hooks';
+import { shortAddress } from '../../ui/utils';
 
-// export interface ItemData {
-//   key: string;
-//   keyring: WalletKeyring;
-// }
-
-// interface MyItemProps {
-//   keyring: WalletKeyring;
-//   autoNav?: boolean;
-// }
-
-export function MyItem() {
-  // const navigate = useNavigate();
-  // const currentKeyring = useCurrentKeyring();
-  // const selected = currentKeyring.index === keyring?.index;
-  // const wallet = useWallet();
-
-  // const keyrings = useKeyrings();
-
-  // const dispatch = useAppDispatch();
-
-  // const tools = useTools();
-
-  // const displayAddress = useMemo(() => {
-  //   const address = keyring.accounts[0].address;
-  //   return shortAddress(address);
-  // }, []);
+export function MyItem(props: any) {
+  const [index] = useState(0);
+  const { keyring, key } = props.items;
+  const { address, alianName } = keyring;
+  const selected = index === key
+  const displayAddress = useMemo(() => {
+    return shortAddress(address);
+  }, []);
 
   const [optionsVisible, setOptionsVisible] = useState(false);
-  // const [removeVisible, setRemoveVisible] = useState(false);
-
   return (
     <Card justifyBetween mt="md">
       <Row
         full
-        // onClick={async () => {
-        //   if (currentKeyring.key !== keyring.key) {
-        //     await wallet.changeKeyring(keyring);
-        //     // dispatch(keyringsActions.setCurrent(keyring));
-        //     // dispatch(accountActions.setCurrent(keyring.accounts[0]));
-        //   }
-        //   if (autoNav) navigate('MainScreen');
-        // }}
+        onClick={async () => {
+        }}
       >
         <Column style={{ width: 20 }} selfItemsCenter>
-          {/* {selected && (
-            <Icon>
-              <CheckCircleFilled />
+          {selected && (
+            <Icon icon="checked">
             </Icon>
-          )} */}
+          )}
         </Column>
 
-        {/* <Column justifyCenter>
-          <Text text={`${keyring.alianName}`} />
-          <Text text={`${displayAddress}`} preset="sub" />
-        </Column> */}
+        <Column justifyCenter>
+          <Text text={alianName} />
+          <Text text={displayAddress} preset="sub" />
+        </Column>
       </Row>
 
       <Column relative>
@@ -175,25 +147,20 @@ export default function SwitchKeyringScreen() {
   const navigate = useNavigate();
   const accounts = useAccounts()
   console.log(accounts, 'accounts=====')
-  // const keyrings = useKeyrings();
 
-  // const items = useMemo(() => {
-  //   const _items: ItemData[] = keyrings.map((v) => {
-  //     return {
-  //       key: v.key,
-  //       keyring: v
-  //     };
-  //   });
-  //   return _items;
-  // }, [keyrings]);
-  // console.log(items, '=items===')
-  // const ForwardMyItem = forwardRef(MyItem);
+  const items = useMemo(() => {
+    const _items = accounts.map((v, index) => {
+      return {
+        key: index,
+        keyring: v
+      };
+    });
+    return _items;
+  }, []);
+  const ForwardMyItem = forwardRef(MyItem);
   return (
     <Layout>
       <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
         title="Switch Wallet"
         RightComponent={
           <Icon
@@ -206,7 +173,7 @@ export default function SwitchKeyringScreen() {
         }
       />
       <Content>
-        {/* <VirtualList
+        <VirtualList
           data={items}
           data-id="list"
           itemHeight={30}
@@ -215,8 +182,8 @@ export default function SwitchKeyringScreen() {
             boxSizing: 'border-box'
           }}
         >
-          {(item) => <ForwardMyItem keyring={item.keyring} autoNav={true} />}
-        </VirtualList> */}
+          {(item) => <ForwardMyItem items={item}/>}
+        </VirtualList>
       </Content>
     </Layout>
   );

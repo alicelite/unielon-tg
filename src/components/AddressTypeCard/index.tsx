@@ -1,12 +1,10 @@
 import { ReactEventHandler } from 'react';
 
 import { AddressAssets } from '../../shared/types';
-import { fontSizes } from '@/ui/theme/font';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { CopyableAddress } from '../CopyableAddress';
-import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
@@ -18,8 +16,7 @@ interface AddressTypeCardProps {
   onClick?: ReactEventHandler<HTMLDivElement>;
 }
 export function AddressTypeCard(props: AddressTypeCardProps) {
-  const { onClick, label, address, assets } = props;
-  const hasVault = Boolean(assets.satoshis && assets.satoshis > 0);
+  const { onClick, label, address } = props;
   return (
     <Card px="zero" py="zero" gap="zero" rounded onClick={onClick}>
       <Column full>
@@ -32,20 +29,6 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
           <CopyableAddress address={address} />
           {/* <Column justifyCenter>{checked && <Icon icon="check" />}</Column> */}
         </Row>
-        {hasVault && (
-          <Row justifyBetween bg="bg3" roundedBottom px="md" py="md">
-            <Row justifyCenter>
-              <Icon icon="doge" size={fontSizes.iconMiddle} />
-              <Text text={`${assets.total_doge} DOGE`} color="yellow" />
-            </Row>
-
-            <Row>
-              {assets.total_inscription > 0 && (
-                <Text text={`${assets.total_inscription} INSCRIPTIONS`} color="gold" preset="bold" />
-              )}
-            </Row>
-          </Row>
-        )}
       </Column>
     </Card>
   );

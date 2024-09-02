@@ -31,7 +31,7 @@ export function Header(props: HeaderProps) {
         justifyBetween
         itemsCenter
         style={{
-          height: '120px',
+          height: '100px',
           padding: 15
         }}
       >

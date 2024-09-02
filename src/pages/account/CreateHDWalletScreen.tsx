@@ -16,28 +16,6 @@ import { generatePhrase } from '../../ui/utils/wallet';
 import { createAndStoreWallet, generateAccount } from '../../ui/utils/hooks';
 import { useAppDispatch } from '../../ui/state/hooks';
 // import { accountActions } from '../../ui/state/accounts/reducer';
-function Step0({
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
-  return (
-    <Column gap="lg">
-      <Text text="Choose a wallet you want to restore from" preset="title-bold" textCenter mt="xl" />
-      {RESTORE_WALLETS.map(({ name, value }: { name: string; value: string }, index: any) => (
-        <Button
-          key={index}
-          preset="default"
-          onClick={() => updateContextData({ tabType: TabType.STEP2, restoreWalletType: value as unknown as RestoreWalletType })}
-        >
-          <Text text={name} />
-        </Button>
-      ))}
-    </Column>
-  );
-}
-
 function Step1_Create({
   updateContextData
 }: {
@@ -170,12 +148,6 @@ function Step1_Import({
     if (hasEmpty) {
       return;
     }
-
-    // const mnemonic = keys.join(' ');
-    // if (!Mnemonic.isValid(mnemonic)) {
-    //   return;
-    // }
-
     setDisabled(false);
   }, [keys]);
 
@@ -183,7 +155,7 @@ function Step1_Import({
   const onNext = async () => {
     const mnemonics = keys.join(' ');
     const address = await generateAccount(mnemonics, dispatch);
-    updateContextData({ mnemonics, address, tabType: TabType.STEP3 });
+    updateContextData({ mnemonics, address, tabType: TabType.STEP2 });
   };
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && 'Enter' == e.key) {
@@ -193,7 +165,7 @@ function Step1_Import({
 
   return (
     <Column gap="lg">
-      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
+      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter size="md" />
       <Text text="Import an existing wallet with your 12 word secret recovery phrase" preset="sub" textCenter />
       <Row justifyCenter>
         <Grid columns={2}>
@@ -212,12 +184,6 @@ function Step1_Import({
                     onChange={(e: any) => {
                       onChange(e, index);
                     }}
-                    // onMouseOverCapture={(e) => {
-                    //   setHover(index);
-                    // }}
-                    // onMouseLeave={(e) => {
-                    //   setHover(999);
-                    // }}
                     onKeyUp={(e: KeyboardEvent<HTMLInputElement>) => handleOnKeyUp(e)}
                     autoFocus={index == curInputIndex}
                   />
@@ -311,6 +277,10 @@ function Step2({
     const { mnemonics, isImport = false } = contextData;
     await createAndStoreWallet(mnemonics, password, isImport, dispatch);
     try {
+      const password = sessionStorage.getItem('password');
+      if(password) {
+        localStorage.setItem('password', password);
+      }
       navigate('/home');
     } catch (e) {
       tools.toastError((e as any).message);
@@ -413,7 +383,6 @@ function Step2({
 enum TabType {
   STEP1 = 'STEP1',
   STEP2 = 'STEP2',
-  STEP3 = 'STEP3'
 }
 
 interface ContextData {
@@ -449,6 +418,7 @@ interface UpdateContextDataParams {
 export default function CreateHDWalletScreen() {
   const { state } = useLocation();
   const { isImport = false } = state as { isImport?: boolean } || {};
+  const [showImportInfo, setShowImportInfo] = useState(false);
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
     hdPath: '',
@@ -477,16 +447,11 @@ export default function CreateHDWalletScreen() {
         {
           key: TabType.STEP1,
           label: 'Step 1',
-          children: <Step0 contextData={contextData} updateContextData={updateContextData} />
+          children: <Step1_Import contextData={contextData} updateContextData={updateContextData} />
         },
         {
           key: TabType.STEP2,
           label: 'Step 2',
-          children: <Step1_Import contextData={contextData} updateContextData={updateContextData} />
-        },
-        {
-          key: TabType.STEP3,
-          label: 'Step 3',
           children: <Step2 contextData={contextData} updateContextData={updateContextData} />
         }
       ];
@@ -510,46 +475,65 @@ export default function CreateHDWalletScreen() {
     const item = items.find((v) => v.key === contextData.tabType);
     return item?.children;
   }, [items, contextData.tabType]);
+  const navigate = useNavigate();
 
   return (
     <Layout>
       <Header
-        onBack={() => {
-          // if (fromUnlock) {
-          //   navigate('WelcomeScreen');
-          // } else {
-          //   window.history.go(-1);
-          // }
-          window.history.go(-1);
-        }}
         title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
       <Content>
-        <Row justifyCenter>
-          <TabBar
-            progressEnabled
-            defaultActiveKey={contextData.tabType}
-            activeKey={contextData.tabType}
-            items={items.map((v) => ({
-              key: v.key,
-              label: v.label
-            }))}
-            onTabClick={(key: TabType) => {
-              const toTabType = key as TabType;
-              if (toTabType === TabType.STEP2) {
-                if (!contextData.step1Completed) {
-                  setTimeout(() => {
-                    updateContextData({ tabType: contextData.tabType });
-                  }, 200);
-                  return;
-                }
-              }
-              updateContextData({ tabType: toTabType });
-            }}
-          />
-        </Row>
-
-        {currentChildren}
+          {
+            showImportInfo ? (
+              <Column justifyCenter >
+              <TabBar
+                progressEnabled
+                defaultActiveKey={contextData.tabType}
+                activeKey={contextData.tabType}
+                items={items.map((v) => ({
+                  key: v.key,
+                  label: v.label
+                }))}
+                onTabClick={(key: TabType) => {
+                  const toTabType = key as TabType;
+                  if (toTabType === TabType.STEP2) {
+                    if (!contextData.step1Completed) {
+                      setTimeout(() => {
+                        updateContextData({ tabType: contextData.tabType });
+                      }, 200);
+                      return;
+                    }
+                  }
+                  updateContextData({ tabType: toTabType });
+                }}
+              />
+                {currentChildren}
+            </Column>
+            ) : 
+            <Column>
+              <Card
+                justifyCenter
+                onClick={() => {
+                  setShowImportInfo(true)
+                }}
+              >
+                <Column full justifyCenter>
+                  <Text text="Restore from mnemonics (12-words)" size="sm" />
+                </Column>
+              </Card>
+    
+              <Card
+                justifyCenter
+                onClick={() => {
+                  navigate('/account/create-simple-wallet')
+                }}
+              >
+                <Column full justifyCenter>
+                  <Text text="Restore from single private key" size="sm" />
+                </Column>
+              </Card>
+            </Column>
+          }
       </Content>
     </Layout>
   );

@@ -20,6 +20,7 @@ import { AddressText } from './AddressText';
 import { AccordingInscription } from './AccordingInscription';
 import { AddressDetailPopover } from './AddressDetailPopover';
 import { RefreshButton } from './RefreshButton';
+import { AddressTypeCard } from './AddressTypeCard';
 
 export {
   Button,
@@ -43,5 +44,6 @@ export {
   AddressText,
   AccordingInscription,
   AddressDetailPopover,
-  RefreshButton
+  RefreshButton,
+  AddressTypeCard
 };

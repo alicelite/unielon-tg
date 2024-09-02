@@ -9,7 +9,7 @@ import { AiOutlineHistory } from "react-icons/ai";
 import { IoIosCopy } from "react-icons/io";
 import { PiEyeSlashLight } from "react-icons/pi";
 import { AiOutlineEye } from "react-icons/ai";
-
+import { HiCheckCircle } from "react-icons/hi2";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon,
@@ -18,7 +18,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash';
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked';
 
 interface IconProps {
   /**
@@ -59,7 +59,8 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   history: AiOutlineHistory,
   copy: IoIosCopy,
   eye: AiOutlineEye,
-  "eye-slash": PiEyeSlashLight
+  "eye-slash": PiEyeSlashLight,
+  checked: HiCheckCircle
 };
 
 export function Icon(props: IconProps) {

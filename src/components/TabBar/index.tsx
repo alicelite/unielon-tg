@@ -77,7 +77,7 @@ export function TabBar(props: TabBarProps) {
   }
 
   return (
-    <Row>
+    <Row justifyCenter>
       {items.map((v, index) => {
         const isSelected = v.key === tabKey;
         if (progressEnabled && index > progress) {

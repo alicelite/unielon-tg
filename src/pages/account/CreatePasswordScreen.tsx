@@ -35,7 +35,7 @@ const CreatePasswordScreen = () => {
       data: hash(password),
       password: password,
     });
-    localStorage.setItem('password', password)
+    sessionStorage.setItem('password', password)
     await setLocalValue({ [PASSWORD]: encryptedPassword });
     run();
   };

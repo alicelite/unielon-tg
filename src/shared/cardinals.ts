@@ -1,7 +1,5 @@
-import { blockcypher, cardinals, cardinalsV3 } from '../api';
+import { blockcypher, cardinals, cardinalsV3, cardinalsV4 } from '../api';
 import { satoshisToDOGE } from '../ui/utils';
-import wretch from 'wretch';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getBalance(address: string) {
   const formData = new FormData();
@@ -60,15 +58,11 @@ export async function getAddressRecentHistory(address: string, offset: number, l
   return fetchData();
 }
 
-// export async function getDogePrice() {
-//   const response = await fetch('https://data.gateapi.io/api2/1/ticker/doge_usdt');
-//   const res = await response.json();
-//   return res;
-// }
-
 export async function getDogePrice() {
-  const response = await wretch(`${API_BASE_URL}/api2/1/ticker/doge_usdt`).get().json();
-  return response;
+  const response = await cardinalsV4.url('/info/dogeprice').post();
+  const res = await response.json();
+  console.log(res)
+  return res;
 }
 
 export async function getUtoxsInfo(address: string, amount: number, count: string) {

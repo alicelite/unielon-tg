@@ -7,7 +7,7 @@ export const decryptWallet = () => {
   return new Promise((resolve, reject) => {
     Promise.all([getLocalValue(WALLET)])
       .then(([wallet]) => {
-        const password = localStorage.getItem('password');
+        const password = localStorage.getItem('password') || sessionStorage.getItem('password');
         const decryptedWallet = decrypt({
           data: wallet,
           password: password ?? '',
@@ -47,6 +47,28 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   setSessionValue({ [PASSWORD]: password });
   await setLocalValue({ [WALLET]: encryptedWallet });
 }
+
+export const privateKeyStoreWallet = async (address: string, password: any, dispatch: any) => {
+  const localWallet = await decryptWallet();
+  const walletList = Array.isArray(localWallet) ? localWallet : [];
+  const wallet = {
+    address,
+    type: 'Simple Key Pair',
+    alianName: `Simple Wallet #${walletList.length + 1}`
+  };
+  dispatch(accountActions.setCurrent(wallet));
+  walletList.push(wallet)
+ 
+  dispatch(accountActions.setAccounts(walletList));
+  const encryptedWallet = encrypt({
+    data: wallet,
+    password: password,
+  });
+
+  setSessionValue({ [PASSWORD]: password });
+  await setLocalValue({ [WALLET]: encryptedWallet });
+}
+
 export const generateAccount = async (phrase: any, dispatch: any) => {
   const root = generateRoot(phrase);
   const child = generateChild(root, 0);
