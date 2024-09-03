@@ -165,7 +165,7 @@ export default function SwitchKeyringScreen() {
         RightComponent={
           <Icon
             onClick={() => {
-              navigate('AddKeyringScreen');
+              navigate('/account/add-keyring');
             }}
           >
             <PlusCircleOutlined />

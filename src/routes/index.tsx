@@ -48,6 +48,10 @@ const routes: Route[] = [
       {
         path: "create-simple-wallet",
         element: React.lazy(() => import("../pages/account/CreateSimpleWalletScreen")),
+      },
+      {
+        path: "add-keyring",
+        element: React.lazy(() => import("../pages/account/AddKeyringScreen")),
       }
     ]
   },

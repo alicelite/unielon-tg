@@ -417,7 +417,7 @@ interface UpdateContextDataParams {
 
 export default function CreateHDWalletScreen() {
   const { state } = useLocation();
-  const { isImport = false } = state as { isImport?: boolean } || {};
+  const { isImport = false, isNewAccount, isAddAccount } = state as { isImport?: boolean, isNewAccount?: boolean, isAddAccount?: boolean} || {};
   const [showImportInfo, setShowImportInfo] = useState(false);
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
@@ -440,7 +440,12 @@ export default function CreateHDWalletScreen() {
     },
     [contextData, setContextData]
   );
-
+  console.log(isImport, 'isImport===')
+  useEffect(() => {
+    if((!isImport && isNewAccount) || isAddAccount) {
+      setShowImportInfo(true);
+    }
+  }, [isImport, isNewAccount]);
   const items = useMemo(() => {
     if (isImport) {
       return [
