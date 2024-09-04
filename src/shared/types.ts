@@ -83,3 +83,8 @@ export interface ToAddressInfo {
   address: string;
   domain?: string;
 }
+
+export enum KeyringType {
+  'HD Key Tree',
+  'Simple Key Pair'
+};

@@ -1,5 +1,5 @@
-import { amountToSaothis, getLocalValue, satoshisToDOGE, setLocalValue, setSessionValue } from ".";
-import { PASSWORD, WALLET } from "../../shared/constant";
+import { amountToSaothis, getLocalValue, satoshisToDOGE, setLocalValue } from ".";
+import { WALLET } from "../../shared/constant";
 import { accountActions } from "../state/accounts/reducer";
 import { decrypt, encrypt, generateAddress, generateChild, generateRoot } from "./wallet";
 
@@ -8,9 +8,12 @@ export const decryptWallet = () => {
     Promise.all([getLocalValue(WALLET)])
       .then(([wallet]) => {
         const password = localStorage.getItem('password') || sessionStorage.getItem('password');
+        console.log('Wallet:', wallet);
+        console.log('password:', password);
+        if(!password) return
         const decryptedWallet = decrypt({
           data: wallet,
-          password: password ?? '',
+          password: password,
         });
         console.log('Decrypted Wallet:', decryptedWallet);
         resolve(decryptedWallet);
@@ -26,31 +29,41 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   const child = generateChild(root, 0);
   const address = generateAddress(child);
   const localWallet = await decryptWallet();
-  const walletList = Array.isArray(localWallet) ? localWallet : [];
-  console.log(walletList.length, 'walletList.length=====')
+  const walletList: any = localWallet ? localWallet : [];
+  console.log(walletList, 'walletList.length=====', localWallet)
+  const isExist = walletList.findIndex((item: { address: any; }) => item.address === address) > -1
+  console.log(isImport, 'isImport==1111', isExist)
+  if(isExist) {
+    return false
+  }
   if(!address) return
   const wallet = {
     phrase,
     address,
-    type: !isImport ? 'Simple Key Pair' : 'HD Key Tree',
-    alianName: !isImport ?  `Simple Wallet #${walletList.length + 1}`: `HD Wallet #${walletList.length + 1}`
+    type: phrase ? 'HD Key Tree' : 'Simple Key Pair',
+    newAccount: !isImport ? true : false,
+    alianName: phrase? `HD Wallet #${walletList.length + 1}` : `Simple Wallet #${walletList.length + 1}`
   };
   dispatch(accountActions.setCurrent(wallet));
   walletList.push(wallet)
  
   dispatch(accountActions.setAccounts(walletList));
   const encryptedWallet = encrypt({
-    data: wallet,
+    data: walletList,
     password: password,
   });
-
-  setSessionValue({ [PASSWORD]: password });
+  console.log('WALLET====1', walletList)
+  console.log('WALLET====1', wallet)
   await setLocalValue({ [WALLET]: encryptedWallet });
+  return true
 }
 
 export const privateKeyStoreWallet = async (address: string, password: any, dispatch: any) => {
   const localWallet = await decryptWallet();
-  const walletList = Array.isArray(localWallet) ? localWallet : [];
+  const walletList: any = localWallet ? localWallet : [];
+  console.log(walletList, 'privateKeyStoreWallet=====', localWallet)
+  const isExist = walletList.findIndex((item: { address: any; }) => item.address === address) > -1
+  console.log(address, 'address==', isExist)
   const wallet = {
     address,
     type: 'Simple Key Pair',
@@ -61,11 +74,11 @@ export const privateKeyStoreWallet = async (address: string, password: any, disp
  
   dispatch(accountActions.setAccounts(walletList));
   const encryptedWallet = encrypt({
-    data: wallet,
+    data: walletList,
     password: password,
   });
-
-  setSessionValue({ [PASSWORD]: password });
+  console.log('WALLET====2', walletList)
+  console.log('WALLET====2', wallet)
   await setLocalValue({ [WALLET]: encryptedWallet });
 }
 

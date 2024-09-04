@@ -3,7 +3,7 @@ import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card } 
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
 import { setLocalValue } from '@/ui/utils';
-import { decryptWallet } from '@/ui/utils/hooks';
+// import { decryptWallet } from '@/ui/utils/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -14,6 +14,11 @@ export default function WalletTabScreen() {
   const [balance, setBalance] = useState()
   const [address, setAddress] = useState()
   const currentAccount = useCurrentAccount()
+  const getDecryptWallet = async () => {
+    // const wallet: any = await decryptWallet()
+    const { address } = currentAccount;
+    setAddress(address)
+  }
   const balanceValue = async () => {
     const res =  await getBalance(address);
     const balance = res?.balance?.toFixed(4) ?? 0;
@@ -36,10 +41,7 @@ export default function WalletTabScreen() {
     const totalPrice = Number(dogePrice?.last) * Number(balance)
     setTotalPrice(totalPrice)
   }
-  const getDecryptWallet = async () => {
-    const wallet: any = await decryptWallet()
-    setAddress(wallet.address)
-  }
+ 
   useEffect(() => {
     const password = localStorage.getItem('password')
     if(password) {

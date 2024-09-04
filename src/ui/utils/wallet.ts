@@ -126,11 +126,14 @@ export const encrypt = ({data, password}: { data: any, password: string }) => {
 
 export const decrypt = ({ data, password }: { data: any, password: string }) => {
   try {
+    console.log(data, password, 'data, password===')
     const decrypted = CryptoJS.AES.decrypt(data, password, {
       format: JSONFormatter,
     });
+    console.log(decrypted, 'decrypted===')
     return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
   } catch (error) {
+    console.log('Error decrypting:', error);
     return null;
   }
 };

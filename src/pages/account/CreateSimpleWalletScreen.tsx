@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button, Column, Content, Header, Input, Layout, Row, Text, TabBar, AddressTypeCard, FooterButtonContainer } from '@/components';
-import { useTools } from '@/components/ActionComponent';
 import { AddressType } from '../../shared/types';
 import { generateAddressFromPrivateKey } from '../../ui/utils/wallet';
 import { privateKeyStoreWallet } from '../../ui/utils/hooks';
 import { useAppDispatch } from '../../ui/state/hooks';
 import { useNavigate } from 'react-router-dom';
+import { useAccounts } from '../../ui/state/accounts/hooks';
+import { useTools } from '../../components/ActionComponent';
 
 function Step1({
   updateContextData
@@ -68,6 +69,8 @@ function Step2({
 }) {
   const tools = useTools();
   const [address, setAddress] = useState('');
+  const accounts = useAccounts()
+  console.log(accounts, 'accounts=====')
   const run = async () => {
     const address = generateAddressFromPrivateKey(contextData.wif)
     console.log('address', address);
@@ -75,12 +78,18 @@ function Step2({
   };
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [formatError, setFormatError] = useState('')
   useEffect(() => {
     run();
   }, [contextData.wif]);
   const onNext = async () => {
     try {
-      const password = sessionStorage.getItem('password');
+      const password = localStorage.getItem('password') || sessionStorage.getItem('password');
+      const isExist = accounts.findIndex((v: any) => v.address === address) > -1;
+      if(isExist) {
+        setFormatError('Wallet existed')
+        return
+      }
       privateKeyStoreWallet(address, password, dispatch)
       if(!password) return
       localStorage.setItem('password', password);
@@ -97,7 +106,7 @@ function Step2({
             address={address}
             checked={true}
           />
-
+      <Text text={formatError} preset="regular" color="error" />
       <FooterButtonContainer>
         <Button text="Coninue" preset="primary" onClick={onNext} />
       </FooterButtonContainer>

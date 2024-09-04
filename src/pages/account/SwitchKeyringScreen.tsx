@@ -8,29 +8,36 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { colors } from '../../ui/theme/colors';
-import { useAccounts } from '../../ui/state/accounts/hooks';
-import { shortAddress } from '../../ui/utils';
+import { colors } from '@/ui/theme/colors';
+import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { shortAddress } from '@/ui/utils';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAppDispatch } from '@/ui/state/hooks';
 
-export function MyItem(props: any) {
-  const [index] = useState(0);
-  const { keyring, key } = props.items;
+export function MyItem(props: any, ref: any) {
+  const { keyring } = props.items;
   const { address, alianName } = keyring;
-  const selected = index === key
   const displayAddress = useMemo(() => {
     return shortAddress(address);
   }, []);
-
+  console.log(keyring, 'keyring')
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [optionsVisible, setOptionsVisible] = useState(false);
   return (
     <Card justifyBetween mt="md">
       <Row
         full
+        ref={ref}
         onClick={async () => {
+          if (address !== props.account) {
+            dispatch(accountActions.setCurrent(keyring));
+          }
+          navigate('/home')
         }}
       >
         <Column style={{ width: 20 }} selfItemsCenter>
-          {selected && (
+          {address === props.account && (
             <Icon icon="checked">
             </Icon>
           )}
@@ -67,7 +74,7 @@ export function MyItem(props: any) {
             setOptionsVisible(!optionsVisible);
           }}
         >
-          <SettingOutlined />
+          <SettingOutlined style={{ fontSize: 18 }} />
         </Icon>
 
         {optionsVisible && (
@@ -91,25 +98,41 @@ export function MyItem(props: any) {
                 <Text text="Edit Name" size="sm" />
               </Row>
 
-              {/* {keyring.type === KEYRING_TYPE.HdKeyring ? (
-                <Row
-                  onClick={() => {
-                    // navigate('ExportMnemonicsScreen', { keyring });
-                  }}
-                >
-                  <KeyOutlined />
-                  <Text text="Show Secret Recovery Phrase" size="sm" />
-                </Row>
+              {keyring.type === 'HD Key Tree' ? (
+                <Column>
+                  <Row
+                    onClick={() => {
+                      // navigate('ExportMnemonicsScreen', { keyring });
+                    }}
+                  >
+                    {/* <KeyOutlined /> */}
+                    <Text text="Show Secret Recovery Phrase" size="sm" />
+                  </Row>
+                  {
+                    keyring.newAccount && (
+                      <Row
+                        onClick={() => {
+                          // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
+                        }}
+                      >
+                        {/* <KeyOutlined /> */}
+                        <Text text="Export WIF" size="sm" />
+                      </Row>
+                    )
+                  }
+
+                </Column>
+
               ) : (
                 <Row
                   onClick={() => {
                     // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                   }}
                 >
-                  <KeyOutlined />
+                  {/* <KeyOutlined /> */}
                   <Text text="Export WIF" size="sm" />
                 </Row>
-              )} */}
+              )}
               {/* <Row
                 onClick={() => {
                   if (keyrings.length == 1) {
@@ -147,9 +170,11 @@ export default function SwitchKeyringScreen() {
   const navigate = useNavigate();
   const accounts = useAccounts()
   console.log(accounts, 'accounts=====')
-
+  const currentAccount = useCurrentAccount();
+  const { address } = currentAccount;
+  console.log(address, 'address3')
   const items = useMemo(() => {
-    const _items = accounts.map((v, index) => {
+    const _items = accounts.map((v: any, index: number) => {
       return {
         key: index,
         keyring: v
@@ -168,7 +193,7 @@ export default function SwitchKeyringScreen() {
               navigate('/account/add-keyring');
             }}
           >
-            <PlusCircleOutlined />
+            <PlusCircleOutlined style={{ fontSize: 18 }} />
           </Icon>
         }
       />
@@ -182,7 +207,7 @@ export default function SwitchKeyringScreen() {
             boxSizing: 'border-box'
           }}
         >
-          {(item) => <ForwardMyItem items={item}/>}
+          {(item) => <ForwardMyItem items={item} account={address} />}
         </VirtualList>
       </Content>
     </Layout>

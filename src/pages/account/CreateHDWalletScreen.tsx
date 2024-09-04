@@ -242,10 +242,6 @@ function Step2({
 
   const [previewAddresses] = useState<any[]>(hdPathOptions.map(() => ''));
 
-  const [addressAssets] = useState<{
-    [key: string]: { total_doge: string; satoshis: number; total_inscription: number };
-  }>({});
-
   const [error, setError] = useState('');
   const [loading] = useState(false);
   const dispatch = useAppDispatch();
@@ -272,13 +268,18 @@ function Step2({
     setError('');
     setPathText('');
   };
+  const [formatError, setFormatError] = useState('')
 
   const onNext = async () => {
     const { mnemonics, isImport = false } = contextData;
-    await createAndStoreWallet(mnemonics, password, isImport, dispatch);
+    const canCreate = await createAndStoreWallet(mnemonics, password, isImport, dispatch);
+    if (!canCreate) {
+      setFormatError('Wallet existed')
+      return
+    }
     try {
       const password = sessionStorage.getItem('password');
-      if(password) {
+      if (password) {
         localStorage.setItem('password', password);
       }
       navigate('/home');
@@ -287,7 +288,7 @@ function Step2({
     }
   };
   const addressTypeInfo = () => {
-    if(hdPathOptions?.length > 0 && previewAddresses?.length > 0) {
+    if (hdPathOptions?.length > 0 && previewAddresses?.length > 0) {
       const outputArray = previewAddresses.some((item) => {
         return item.address && (item.address.startsWith('A') || item.address.startsWith('9')) && (+item.balance > 0 || item.drcList.length > 0);
       }) ? hdPathOptions : [hdPathOptions[0]];
@@ -297,27 +298,16 @@ function Step2({
   useEffect(() => {
     addressTypeInfo()
   }, [hdPathOptions, previewAddresses])
-  
   return (
     <Column>
       <Text text="Address Type" preset="bold" />
       {hdPathOptionsList?.map((item, index) => {
-        const assets = addressAssets[contextData.address] || {
-          total_doge: '--',
-          satoshis: 0,
-          total_inscription: 0
-        };
-        const hasVault = contextData.isRestore && assets.satoshis > 0;
-        if ((+previewAddresses[index]?.balance === 0 || previewAddresses[index]?.drcList?.length > 0) && !hasVault) {
-          return null;
-        }
         const hdPath = (contextData.customHdPath || item.hdPath) + '/0';
         return (
           <AddressTypeCard
             key={index}
             label={`${item.label} (${hdPath})`}
             address={contextData.address}
-            assets={assets}
             checked={index == contextData.addressTypeIndex}
             onClick={() => {
               updateContextData({
@@ -328,6 +318,7 @@ function Step2({
           />
         );
       })}
+      <Text text={formatError} preset="regular" color="error" />
 
       <Text text="Custom HdPath (Optional)" preset="bold" mt="lg" />
 
@@ -366,7 +357,6 @@ function Step2({
           });
         }}
       />
-
       <FooterButtonContainer>
         <Button text="Continue" preset="primary" onClick={onNext} />
       </FooterButtonContainer>
@@ -417,7 +407,7 @@ interface UpdateContextDataParams {
 
 export default function CreateHDWalletScreen() {
   const { state } = useLocation();
-  const { isImport = false, isNewAccount, isAddAccount } = state as { isImport?: boolean, isNewAccount?: boolean, isAddAccount?: boolean} || {};
+  const { isImport = false, isNewAccount, isAddAccount } = state as { isImport?: boolean, isNewAccount?: boolean, isAddAccount?: boolean } || {};
   const [showImportInfo, setShowImportInfo] = useState(false);
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
@@ -440,9 +430,8 @@ export default function CreateHDWalletScreen() {
     },
     [contextData, setContextData]
   );
-  console.log(isImport, 'isImport===')
   useEffect(() => {
-    if((!isImport && isNewAccount) || isAddAccount) {
+    if ((!isImport && isNewAccount) || isAddAccount) {
       setShowImportInfo(true);
     }
   }, [isImport, isNewAccount]);
@@ -488,9 +477,9 @@ export default function CreateHDWalletScreen() {
         title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
       <Content>
-          {
-            showImportInfo ? (
-              <Column justifyCenter >
+        {
+          showImportInfo ? (
+            <Column justifyCenter >
               <TabBar
                 progressEnabled
                 defaultActiveKey={contextData.tabType}
@@ -512,9 +501,9 @@ export default function CreateHDWalletScreen() {
                   updateContextData({ tabType: toTabType });
                 }}
               />
-                {currentChildren}
+              {currentChildren}
             </Column>
-            ) : 
+          ) :
             <Column>
               <Card
                 justifyCenter
@@ -526,7 +515,7 @@ export default function CreateHDWalletScreen() {
                   <Text text="Restore from mnemonics (12-words)" size="sm" />
                 </Column>
               </Card>
-    
+
               <Card
                 justifyCenter
                 onClick={() => {
@@ -538,7 +527,7 @@ export default function CreateHDWalletScreen() {
                 </Column>
               </Card>
             </Column>
-          }
+        }
       </Content>
     </Layout>
   );
