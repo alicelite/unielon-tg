@@ -28,40 +28,40 @@ interface WIF {
   compressed: boolean;
 }
 
-const JSONFormatter = {
-  stringify(cipherParams: { ciphertext: { toString: (arg0: any) => any; }; iv: { toString: () => any; }; salt: { toString: () => any; }; }) {
-    // create json object with ciphertext
-    const jsonObj: { ct: any; iv?: any; s?: any } = {
-      ct: cipherParams.ciphertext.toString(CryptoJS.enc.Base64),
-    };
-    // optionally add iv or salt
-    if (cipherParams.iv) {
-      jsonObj.iv = cipherParams.iv.toString();
-    }
-    if (cipherParams.salt) {
-      jsonObj.s = cipherParams.salt.toString();
-    }
-    // stringify json object
-    return JSON.stringify(jsonObj);
-  },
-  parse(jsonStr: string) {
-    // parse json string
-    const jsonObj = JSON.parse(jsonStr);
-    // extract ciphertext from json object, and create cipher params object
-    const cipherParams = CryptoJS.lib.CipherParams.create({
-      ciphertext: CryptoJS.enc.Base64.parse(jsonObj.ct),
-    });
-    // optionally extract iv or salt
-    if (jsonObj.iv) {
-      cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv);
-    }
-    if (jsonObj.s) {
-      cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s);
-    }
+// const JSONFormatter = {
+//   stringify(cipherParams: { ciphertext: { toString: (arg0: any) => any; }; iv: { toString: () => any; }; salt: { toString: () => any; }; }) {
+//     // create json object with ciphertext
+//     const jsonObj: { ct: any; iv?: any; s?: any } = {
+//       ct: cipherParams.ciphertext.toString(CryptoJS.enc.Base64),
+//     };
+//     // optionally add iv or salt
+//     if (cipherParams.iv) {
+//       jsonObj.iv = cipherParams.iv.toString();
+//     }
+//     if (cipherParams.salt) {
+//       jsonObj.s = cipherParams.salt.toString();
+//     }
+//     // stringify json object
+//     return JSON.stringify(jsonObj);
+//   },
+//   parse(jsonStr: string) {
+//     // parse json string
+//     const jsonObj = JSON.parse(jsonStr);
+//     // extract ciphertext from json object, and create cipher params object
+//     const cipherParams = CryptoJS.lib.CipherParams.create({
+//       ciphertext: CryptoJS.enc.Base64.parse(jsonObj.ct),
+//     });
+//     // optionally extract iv or salt
+//     if (jsonObj.iv) {
+//       cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv);
+//     }
+//     if (jsonObj.s) {
+//       cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s);
+//     }
 
-    return cipherParams;
-  },
-};
+//     return cipherParams;
+//   },
+// };
 
 export const generatePhrase = () => {
   return bip39.generateMnemonic(128);
@@ -117,26 +117,33 @@ export function generateAddress(child: any) {
   }).address;
 }
 
-export const encrypt = ({data, password}: { data: any, password: string }) => {
-  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), password, {
-    format: JSONFormatter,
-  });
-  return encrypted.toString();
-};
+// export const encrypt = ({data, password}: { data: any, password: string }) => {
+//   const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), password, {
+//     format: JSONFormatter,
+//   });
+//   return encrypted.toString();
+// };
 
-export const decrypt = ({ data, password }: { data: any, password: string }) => {
-  try {
-    console.log(data, password, 'data, password===')
-    const decrypted = CryptoJS.AES.decrypt(data, password, {
-      format: JSONFormatter,
-    });
-    console.log(decrypted, 'decrypted===')
-    return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-  } catch (error) {
-    console.log('Error decrypting:', error);
-    return null;
-  }
-};
+// export const decrypt = ({ data, password }: { data: any, password: string }) => {
+//   try {
+//     const decrypted = CryptoJS.AES.decrypt(data, password, {
+//       format: JSONFormatter,
+//     });
+//     return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+//   } catch (error) {
+//     console.log('Error decrypting:', error);
+//     return null;
+//   }
+// };
+
+export const encrypt = (data: any, secretKey: string) =>{
+  return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+}
+
+export const decrypt = (ciphertext: any, secretKey: string) => {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+}
 
 export const hash = (password: any) => {
   return CryptoJS.SHA256(password).toString();

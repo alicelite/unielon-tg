@@ -88,3 +88,11 @@ export enum KeyringType {
   'HD Key Tree',
   'Simple Key Pair'
 };
+
+export type WalletKeyring = {
+  address: string;
+  alianName: string;
+  phrase: string;
+  newAccount: boolean;
+  type: string;
+};

@@ -39,10 +39,6 @@ export function useCreateDogecoinTxCallback() {
             revealAddr: toAddressInfo.address,
             amount: toAmount
         });
-        console.log(commitTxPrevOutputList, 'commitTxPrevOutputList----')
-        console.log(transactionDataList, 'transactionDataList----')
-        console.log(address, 'address----')
-        console.log(feeRate, 'feeRate----')
         const request = {
             commitTxPrevOutputList,
             commitFeeRate: 50000,

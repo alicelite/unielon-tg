@@ -8,13 +8,9 @@ export const decryptWallet = () => {
     Promise.all([getLocalValue(WALLET)])
       .then(([wallet]) => {
         const password = localStorage.getItem('password') || sessionStorage.getItem('password');
-        console.log('Wallet:', wallet);
-        console.log('password:', password);
         if(!password) return
-        const decryptedWallet = decrypt({
-          data: wallet,
-          password: password,
-        });
+        if(!wallet) return resolve([])
+        const decryptedWallet = decrypt(wallet, password)
         console.log('Decrypted Wallet:', decryptedWallet);
         resolve(decryptedWallet);
       })
@@ -30,9 +26,7 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   const address = generateAddress(child);
   const localWallet = await decryptWallet();
   const walletList: any = localWallet ? localWallet : [];
-  console.log(walletList, 'walletList.length=====', localWallet)
   const isExist = walletList.findIndex((item: { address: any; }) => item.address === address) > -1
-  console.log(isImport, 'isImport==1111', isExist)
   if(isExist) {
     return false
   }
@@ -48,12 +42,7 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   walletList.push(wallet)
  
   dispatch(accountActions.setAccounts(walletList));
-  const encryptedWallet = encrypt({
-    data: walletList,
-    password: password,
-  });
-  console.log('WALLET====1', walletList)
-  console.log('WALLET====1', wallet)
+  const encryptedWallet = encrypt(walletList, password);
   await setLocalValue({ [WALLET]: encryptedWallet });
   return true
 }
@@ -61,9 +50,10 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
 export const privateKeyStoreWallet = async (address: string, password: any, dispatch: any) => {
   const localWallet = await decryptWallet();
   const walletList: any = localWallet ? localWallet : [];
-  console.log(walletList, 'privateKeyStoreWallet=====', localWallet)
   const isExist = walletList.findIndex((item: { address: any; }) => item.address === address) > -1
-  console.log(address, 'address==', isExist)
+  if(isExist) {
+    return false
+  }
   const wallet = {
     address,
     type: 'Simple Key Pair',
@@ -73,13 +63,9 @@ export const privateKeyStoreWallet = async (address: string, password: any, disp
   walletList.push(wallet)
  
   dispatch(accountActions.setAccounts(walletList));
-  const encryptedWallet = encrypt({
-    data: walletList,
-    password: password,
-  });
-  console.log('WALLET====2', walletList)
-  console.log('WALLET====2', wallet)
+  const encryptedWallet = encrypt(walletList, password);
   await setLocalValue({ [WALLET]: encryptedWallet });
+  return true
 }
 
 export const generateAccount = async (phrase: any, dispatch: any) => {

@@ -61,7 +61,6 @@ export async function getAddressRecentHistory(address: string, offset: number, l
 export async function getDogePrice() {
   const response = await cardinalsV4.url('/info/dogeprice').post();
   const res = await response.json();
-  console.log(res)
   return res;
 }
 

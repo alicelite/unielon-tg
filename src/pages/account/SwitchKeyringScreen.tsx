@@ -3,7 +3,6 @@ import { useMemo, useState, forwardRef } from 'react';
 
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/components';
 import {
-  EditOutlined,
   PlusCircleOutlined,
   SettingOutlined
 } from '@ant-design/icons';
@@ -20,7 +19,6 @@ export function MyItem(props: any, ref: any) {
   const displayAddress = useMemo(() => {
     return shortAddress(address);
   }, []);
-  console.log(keyring, 'keyring')
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [optionsVisible, setOptionsVisible] = useState(false);
@@ -81,7 +79,7 @@ export function MyItem(props: any, ref: any) {
           <Column
             style={{
               backgroundColor: colors.black,
-              width: 180,
+              width: 210,
               position: 'absolute',
               right: 0,
               padding: 5,
@@ -91,10 +89,10 @@ export function MyItem(props: any, ref: any) {
             <Column>
               <Row
                 onClick={() => {
-                  // navigate('EditWalletNameScreen', { keyring });
+                  navigate('/settings/edit-wallet-name', { state: {keyring} });
                 }}
               >
-                <EditOutlined />
+                <Icon color="white" icon="edit" />
                 <Text text="Edit Name" size="sm" />
               </Row>
 
@@ -102,10 +100,10 @@ export function MyItem(props: any, ref: any) {
                 <Column>
                   <Row
                     onClick={() => {
-                      // navigate('ExportMnemonicsScreen', { keyring });
+                      navigate('/settings/export-mnemonics', { state:{ keyring }});
                     }}
                   >
-                    {/* <KeyOutlined /> */}
+                    <Icon icon="key" color="white" />
                     <Text text="Show Secret Recovery Phrase" size="sm" />
                   </Row>
                   {
@@ -115,7 +113,7 @@ export function MyItem(props: any, ref: any) {
                           // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                         }}
                       >
-                        {/* <KeyOutlined /> */}
+                        <Icon icon="key" color="white" />
                         <Text text="Export WIF" size="sm" />
                       </Row>
                     )
@@ -129,7 +127,7 @@ export function MyItem(props: any, ref: any) {
                     // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                   }}
                 >
-                  {/* <KeyOutlined /> */}
+                  <Icon icon="key" color="white" />
                   <Text text="Export WIF" size="sm" />
                 </Row>
               )}
@@ -169,10 +167,8 @@ export function MyItem(props: any, ref: any) {
 export default function SwitchKeyringScreen() {
   const navigate = useNavigate();
   const accounts = useAccounts()
-  console.log(accounts, 'accounts=====')
   const currentAccount = useCurrentAccount();
   const { address } = currentAccount;
-  console.log(address, 'address3')
   const items = useMemo(() => {
     const _items = accounts.map((v: any, index: number) => {
       return {

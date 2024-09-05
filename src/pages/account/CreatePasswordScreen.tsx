@@ -31,10 +31,7 @@ const CreatePasswordScreen = () => {
   const btnClick = async () => {
     dispatch({ type: 'SET_PASSWORD', payload: password });
     dispatch({ type: 'SET_IS_BOOTED', payload: true });
-    const encryptedPassword = encrypt({
-      data: hash(password),
-      password: password,
-    });
+    const encryptedPassword = encrypt(hash(password), password)
     sessionStorage.setItem('password', password)
     await setLocalValue({ [PASSWORD]: encryptedPassword });
     run();

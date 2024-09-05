@@ -56,6 +56,20 @@ const routes: Route[] = [
     ]
   },
   {
+    path: "/settings",
+    element: React.lazy(() => import("../pages/layouts/CommonLayout")),
+    children: [
+      {
+        path: "edit-wallet-name",
+        element: React.lazy(() => import("../pages/settings/EditWalletNameScreen")),
+      },
+      {
+        path: "export-mnemonics",
+        element: React.lazy(() => import("../pages/settings/ExportMnemonicsScreen")),
+      }
+    ]
+  },
+  {
     path: "/tx-create",
     element: React.lazy(() => import("../pages/wallet/TxCreateScreen")),
   },

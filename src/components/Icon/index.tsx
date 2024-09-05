@@ -10,6 +10,8 @@ import { IoIosCopy } from "react-icons/io";
 import { PiEyeSlashLight } from "react-icons/pi";
 import { AiOutlineEye } from "react-icons/ai";
 import { HiCheckCircle } from "react-icons/hi2";
+import { FiEdit3 } from "react-icons/fi";
+import { SlKey } from "react-icons/sl";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon,
@@ -18,7 +20,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked';
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key';
 
 interface IconProps {
   /**
@@ -60,7 +62,9 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   copy: IoIosCopy,
   eye: AiOutlineEye,
   "eye-slash": PiEyeSlashLight,
-  checked: HiCheckCircle
+  checked: HiCheckCircle,
+  edit: FiEdit3,
+  key: SlKey
 };
 
 export function Icon(props: IconProps) {

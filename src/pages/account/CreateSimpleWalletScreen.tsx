@@ -70,10 +70,8 @@ function Step2({
   const tools = useTools();
   const [address, setAddress] = useState('');
   const accounts = useAccounts()
-  console.log(accounts, 'accounts=====')
   const run = async () => {
     const address = generateAddressFromPrivateKey(contextData.wif)
-    console.log('address', address);
     setAddress(address)
   };
   const dispatch = useAppDispatch();
