@@ -88,7 +88,7 @@ function Step2({
         setFormatError('Wallet existed')
         return
       }
-      privateKeyStoreWallet(address, password, dispatch)
+      privateKeyStoreWallet(address, password, contextData.wif, dispatch)
       if(!password) return
       localStorage.setItem('password', password);
       navigate('/home');

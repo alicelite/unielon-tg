@@ -110,7 +110,7 @@ export function MyItem(props: any, ref: any) {
                     keyring.newAccount && (
                       <Row
                         onClick={() => {
-                          // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
+                          navigate('/settings/export-private-key', { state: { keyring } });
                         }}
                       >
                         <Icon icon="key" color="white" />
@@ -124,7 +124,7 @@ export function MyItem(props: any, ref: any) {
               ) : (
                 <Row
                   onClick={() => {
-                    // navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
+                    navigate('/settings/export-private-key', { state: { keyring } });
                   }}
                 >
                   <Icon icon="key" color="white" />

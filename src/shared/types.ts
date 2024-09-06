@@ -95,4 +95,5 @@ export type WalletKeyring = {
   phrase: string;
   newAccount: boolean;
   type: string;
+  wif?: string;
 };

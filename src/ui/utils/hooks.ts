@@ -47,7 +47,7 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
   return true
 }
 
-export const privateKeyStoreWallet = async (address: string, password: any, dispatch: any) => {
+export const privateKeyStoreWallet = async (address: string, password: any, wif: string, dispatch: any) => {
   const localWallet = await decryptWallet();
   const walletList: any = localWallet ? localWallet : [];
   const isExist = walletList.findIndex((item: { address: any; }) => item.address === address) > -1
@@ -55,6 +55,7 @@ export const privateKeyStoreWallet = async (address: string, password: any, disp
     return false
   }
   const wallet = {
+    wif,
     address,
     type: 'Simple Key Pair',
     alianName: `Simple Wallet #${walletList.length + 1}`

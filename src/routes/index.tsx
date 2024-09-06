@@ -66,7 +66,11 @@ const routes: Route[] = [
       {
         path: "export-mnemonics",
         element: React.lazy(() => import("../pages/settings/ExportMnemonicsScreen")),
-      }
+      },
+      {
+        path: "export-private-key",
+        element: React.lazy(() => import("../pages/settings/ExportPrivateKeyScreen")),
+      },
     ]
   },
   {

@@ -141,6 +141,8 @@ export const encrypt = (data: any, secretKey: string) =>{
 }
 
 export const decrypt = (ciphertext: any, secretKey: string) => {
+  console.log('Ciphertext:', ciphertext);
+  console.log('secretKey:', secretKey);
   const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
   return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 }
