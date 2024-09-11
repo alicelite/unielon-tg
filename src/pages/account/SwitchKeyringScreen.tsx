@@ -7,7 +7,6 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useTools } from '../../components/ActionComponent';
 import { shortAddress } from '@/ui/utils';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
@@ -22,7 +21,6 @@ export function MyItem(props: any, ref: any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [optionsVisible, setOptionsVisible] = useState(false);
-  const tools = useTools();
   const [removeVisible, setRemoveVisible] = useState(false)
   return (
     <Card justifyBetween mt="md">

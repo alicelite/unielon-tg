@@ -20,7 +20,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete'; 
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close'; 
 
 interface IconProps {
   /**
