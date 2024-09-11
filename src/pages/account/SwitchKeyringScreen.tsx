@@ -1,18 +1,18 @@
 import VirtualList from 'rc-virtual-list';
 import { useMemo, useState, forwardRef } from 'react';
 
-import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/components';
+import { Card, Column, Content, Header, Icon, Layout, Row, Text, RemoveWalletPopover } from '@/components';
 import {
   PlusCircleOutlined,
   SettingOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTools } from '../../components/ActionComponent';
+import { shortAddress } from '@/ui/utils';
+import { useAppDispatch } from '@/ui/state/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
 import { colors } from '@/ui/theme/colors';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { shortAddress } from '@/ui/utils';
-import { accountActions } from '@/ui/state/accounts/reducer';
-import { useAppDispatch } from '@/ui/state/hooks';
-
 export function MyItem(props: any, ref: any) {
   const { keyring } = props.items;
   const { address, alianName } = keyring;
@@ -22,6 +22,8 @@ export function MyItem(props: any, ref: any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [optionsVisible, setOptionsVisible] = useState(false);
+  const tools = useTools();
+  const [removeVisible, setRemoveVisible] = useState(false)
   return (
     <Card justifyBetween mt="md">
       <Row
@@ -82,6 +84,7 @@ export function MyItem(props: any, ref: any) {
               width: 210,
               position: 'absolute',
               right: 0,
+              borderRadius: 5,
               padding: 5,
               zIndex: 10
             }}
@@ -131,35 +134,32 @@ export function MyItem(props: any, ref: any) {
                   <Text text="Export WIF" size="sm" />
                 </Row>
               )}
-              {/* <Row
-                onClick={() => {
-                  if (keyrings.length == 1) {
-                    tools.toastError('Removing the last wallet is not allowed');
-                    return;
-                  }
-                  setRemoveVisible(true);
-                  setOptionsVisible(false);
-                }}
-              >
-                <Icon color="danger">
-                  <DeleteOutlined />
-                </Icon>
-
-                <Text text="Remove Wallet" size="sm" color="danger" />
-              </Row> */}
+              {
+                props.accounts.length > 1 && 
+                <Row
+                  onClick={() => {
+                    setRemoveVisible(true);
+                    setOptionsVisible(false);
+                  }}
+                >
+                  <Icon color="danger" icon="delete" />
+                  <Text text="Remove Wallet" size="sm" color="danger" />
+                </Row>
+              }
+             
             </Column>
           </Column>
         )}
       </Column>
 
-      {/* {removeVisible && (
+      {removeVisible && (
         <RemoveWalletPopover
           keyring={keyring}
           onClose={() => {
             setRemoveVisible(false);
           }}
         />
-      )} */}
+      )}
     </Card>
   );
 }
@@ -177,7 +177,7 @@ export default function SwitchKeyringScreen() {
       };
     });
     return _items;
-  }, []);
+  }, [accounts]);
   const ForwardMyItem = forwardRef(MyItem);
   return (
     <Layout>
@@ -203,7 +203,7 @@ export default function SwitchKeyringScreen() {
             boxSizing: 'border-box'
           }}
         >
-          {(item) => <ForwardMyItem items={item} account={address} />}
+          {(item) => <ForwardMyItem items={item} account={address} accounts={accounts}/>}
         </VirtualList>
       </Content>
     </Layout>

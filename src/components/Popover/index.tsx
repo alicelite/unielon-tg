@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { CloseOutlined } from '@ant-design/icons';
-
 import { Row } from '../Row';
+import { Icon } from '../Icon';
 
 export const Popover = ({ children, onClose }: { children: React.ReactNode; onClose: () => void }) => {
   return (
@@ -19,7 +18,7 @@ export const Popover = ({ children, onClose }: { children: React.ReactNode; onCl
             onClose();
           }}
         >
-          <CloseOutlined />
+          <Icon icon="close" color="white" style={{fontSize: '30px'}} />
         </Row>
         {children}
       </div>

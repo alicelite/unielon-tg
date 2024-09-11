@@ -15,6 +15,7 @@ import { useGlobalState } from '../../Context';
 import { generatePhrase } from '../../ui/utils/wallet';
 import { createAndStoreWallet, generateAccount } from '../../ui/utils/hooks';
 import { useAppDispatch } from '../../ui/state/hooks';
+import { useAccounts } from '../../ui/state/accounts/hooks';
 // import { accountActions } from '../../ui/state/accounts/reducer';
 function Step1_Create({
   updateContextData
@@ -269,10 +270,10 @@ function Step2({
     setPathText('');
   };
   const [formatError, setFormatError] = useState('')
-
+  const accounts = useAccounts()
   const onNext = async () => {
     const { mnemonics, isImport = false } = contextData;
-    const canCreate = await createAndStoreWallet(mnemonics, password, isImport, dispatch);
+    const canCreate = await createAndStoreWallet(mnemonics, password, isImport, accounts, dispatch);
     if (!canCreate) {
       setFormatError('Wallet existed')
       return

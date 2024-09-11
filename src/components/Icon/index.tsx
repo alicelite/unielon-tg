@@ -12,15 +12,15 @@ import { AiOutlineEye } from "react-icons/ai";
 import { HiCheckCircle } from "react-icons/hi2";
 import { FiEdit3 } from "react-icons/fi";
 import { SlKey } from "react-icons/sl";
+import { RiDeleteBin5Line } from "react-icons/ri";
 export const svgRegistry = {
   doge: dogeIcon,
-  success: successIcon,
-  delete: '/images/icons/delete.svg'
+  success: successIcon
 };
 
-const iconImgList: Array<IconTypes> = ['success', 'delete', 'doge'];
+const iconImgList: Array<IconTypes> = ['success', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key';
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete'; 
 
 interface IconProps {
   /**
@@ -64,8 +64,9 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   "eye-slash": PiEyeSlashLight,
   checked: HiCheckCircle,
   edit: FiEdit3,
-  key: SlKey
-};
+  key: SlKey,
+  delete: RiDeleteBin5Line,
+}
 
 export function Icon(props: IconProps) {
   const {

@@ -136,16 +136,16 @@ export function generateAddress(child: any) {
 //   }
 // };
 
-export const encrypt = (data: any, secretKey: string) =>{
-  return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
-}
+// export const encrypt = (data: any, secretKey: string) =>{
+//   return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+// }
 
-export const decrypt = (ciphertext: any, secretKey: string) => {
-  console.log('Ciphertext:', ciphertext);
-  console.log('secretKey:', secretKey);
-  const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
-  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-}
+// export const decrypt = (ciphertext: any, secretKey: string) => {
+//   console.log('Ciphertext:', ciphertext, typeof ciphertext);
+//   console.log('secretKey:', secretKey);
+//   const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+//   return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+// }
 
 export const hash = (password: any) => {
   return CryptoJS.SHA256(password).toString();
@@ -158,5 +158,53 @@ export const validatePassword = async (password: any): Promise<boolean> => {
   } catch (error) {
     console.error('Error fetching session value:', error);
     return false;
+  }
+};
+
+const JSONFormatter = {
+  stringify: function (cipherParams: any) {
+    const jsonObj: any = { ct: cipherParams.ciphertext.toString(CryptoJS.enc.Base64) };
+    if (cipherParams.salt) {
+      jsonObj.s = cipherParams.salt.toString();
+    }
+    if (cipherParams.iv) {
+      jsonObj.iv = cipherParams.iv.toString();
+    }
+    return JSON.stringify(jsonObj);
+  },
+
+  parse: function (jsonStr: string) {
+    const jsonObj = JSON.parse(jsonStr);
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Base64.parse(jsonObj.ct),
+    });
+    if (jsonObj.s) {
+      cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s);
+    }
+    if (jsonObj.iv) {
+      cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv);
+    }
+    return cipherParams;
+  },
+};
+
+
+export const encrypt = (data: any, secretKey: string) => {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey, {
+    format: JSONFormatter,
+  }).toString();
+};
+
+export const decrypt = (ciphertext: string, secretKey: string) => {
+  try {
+    const decrypted = CryptoJS.AES.decrypt(ciphertext, secretKey, {
+      format: JSONFormatter,
+    });
+    console.log('Decrypted:', decrypted);
+    const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(decryptedData);
+  } catch (error) {
+    console.error('Error decrypting:', error);
+    return null;
   }
 };
