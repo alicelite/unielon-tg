@@ -21,7 +21,9 @@ import { AccordingInscription } from './AccordingInscription';
 import { AddressDetailPopover } from './AddressDetailPopover';
 import { RefreshButton } from './RefreshButton';
 import { AddressTypeCard } from './AddressTypeCard';
+import { NavTabBar } from './NavTabBar';
 import { RemoveWalletPopover } from './RemoveWalletPopover';
+
 export {
   Button,
   Footer,
@@ -46,5 +48,6 @@ export {
   AddressDetailPopover,
   RefreshButton,
   AddressTypeCard,
-  RemoveWalletPopover
+  RemoveWalletPopover,
+  NavTabBar
 };

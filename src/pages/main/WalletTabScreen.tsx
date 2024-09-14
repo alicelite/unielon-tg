@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card } from '@/components';
+import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card, NavTabBar, Footer } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
 import { setLocalValue } from '@/ui/utils';
@@ -109,6 +109,9 @@ export default function WalletTabScreen() {
           </Row>
         </Column>
       </Content>
+      <Footer px="zero" py="zero">
+        <NavTabBar tab="home" />
+      </Footer>
     </Layout>
   );
 }

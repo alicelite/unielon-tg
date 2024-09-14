@@ -26,6 +26,14 @@ const routes: Route[] = [
     element: React.lazy(() => import("../pages/main/WalletTabScreen")),
   },
   {
+    path: "/app",
+    element: React.lazy(() => import("../pages/main/AppTabScreen")),
+  },
+  {
+    path: "/settings",
+    element: React.lazy(() => import("../pages/main/SettingsTabScreen")),
+  },
+  {
     path: "/account",
     element: React.lazy(() => import("../pages/layouts/CommonLayout")),
     children: [

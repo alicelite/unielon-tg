@@ -20,8 +20,8 @@ export function useCreateDogecoinTxCallback() {
   const currentAccount = useCurrentAccount();
   return useCallback(
     async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate: number, utxos: any) => {
-      const { phrase, address } = currentAccount
-      const yourPrivateKeyWIF = getPrivateKey(phrase)
+      const { phrase, address, newAccount, wif } = currentAccount
+      const yourPrivateKeyWIF = phrase && newAccount ? getPrivateKey(phrase) : wif
       const unspentOutputs = utxos.map((item: any) => {
         return {
           txId: item.txid,
@@ -47,7 +47,9 @@ export function useCreateDogecoinTxCallback() {
             changeAddress: address,
             transactionFee: feeRate
         };
+        console.log(request, ['request=====>>>>>>>>,,,,']);
         const txs: TransactionTxs = transaction(dogeCoin, request)
+        console.log(txs, ['txs=====>>>>>>>>,,,,']);
         return txs.commitTx
     },
     [dispatch, currentAccount]

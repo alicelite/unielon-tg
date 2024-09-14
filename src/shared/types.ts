@@ -64,6 +64,8 @@ export interface Account {
   key?: string;
   phrase?: string;
   mnemonics?: string;
+  wif?: string;
+  newAccount?: boolean;
 }
 
 export interface Utxo {

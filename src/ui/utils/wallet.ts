@@ -117,36 +117,6 @@ export function generateAddress(child: any) {
   }).address;
 }
 
-// export const encrypt = ({data, password}: { data: any, password: string }) => {
-//   const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), password, {
-//     format: JSONFormatter,
-//   });
-//   return encrypted.toString();
-// };
-
-// export const decrypt = ({ data, password }: { data: any, password: string }) => {
-//   try {
-//     const decrypted = CryptoJS.AES.decrypt(data, password, {
-//       format: JSONFormatter,
-//     });
-//     return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-//   } catch (error) {
-//     console.log('Error decrypting:', error);
-//     return null;
-//   }
-// };
-
-// export const encrypt = (data: any, secretKey: string) =>{
-//   return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
-// }
-
-// export const decrypt = (ciphertext: any, secretKey: string) => {
-//   console.log('Ciphertext:', ciphertext, typeof ciphertext);
-//   console.log('secretKey:', secretKey);
-//   const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
-//   return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-// }
-
 export const hash = (password: any) => {
   return CryptoJS.SHA256(password).toString();
 };

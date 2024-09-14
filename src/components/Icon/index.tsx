@@ -13,6 +13,12 @@ import { HiCheckCircle } from "react-icons/hi2";
 import { FiEdit3 } from "react-icons/fi";
 import { SlKey } from "react-icons/sl";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { FaWallet } from "react-icons/fa";
+import { IoGrid } from "react-icons/io5";
+import { IoMdSettings } from "react-icons/io";
+import { BiMerge } from "react-icons/bi";
+import { FaDiscord } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon
@@ -20,7 +26,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close'; 
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close' | 'wallet' | 'grid' | 'settings' | 'merge' | 'discord' | 'twitter'; 
 
 interface IconProps {
   /**
@@ -66,6 +72,12 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   edit: FiEdit3,
   key: SlKey,
   delete: RiDeleteBin5Line,
+  wallet: FaWallet,
+  grid: IoGrid,
+  settings: IoMdSettings,
+  merge: BiMerge,
+  discord: FaDiscord,
+  twitter: FaTwitter
 }
 
 export function Icon(props: IconProps) {
