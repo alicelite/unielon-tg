@@ -44,6 +44,20 @@ const routes: Route[] = [
     ]
   },
   {
+    path: "/drc20",
+    element: React.lazy(() => import("../pages/layouts/CommonLayout")),
+    children: [
+      {
+        path: "transfer-history",
+        element: React.lazy(() => import("../pages/drc20/TransferHistory")),
+      },
+      {
+        path: "add-token",
+        element: React.lazy(() => import("../pages/drc20/AddDRC20Token")),
+      }
+    ]
+  },
+  {
     path: "/account",
     element: React.lazy(() => import("../pages/layouts/CommonLayout")),
     children: [

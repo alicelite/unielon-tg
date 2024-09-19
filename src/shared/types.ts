@@ -99,3 +99,18 @@ export type WalletKeyring = {
   type: string;
   wif?: string;
 };
+
+export interface TokenBalance {
+  isdrc20: any;
+  tick: string;
+  amt: string;
+  last_price: number;
+  total_price: string | number
+  isHide: boolean
+}
+
+export interface DRC20TransferHistory {
+  length: any;
+  limit: number;
+  receive_address: string
+}

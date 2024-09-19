@@ -19,6 +19,9 @@ import { IoMdSettings } from "react-icons/io";
 import { BiMerge } from "react-icons/bi";
 import { FaDiscord } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
+import { TbTransferVertical } from "react-icons/tb";
+import { IoMdSearch } from "react-icons/io";
+import { FaCheck } from "react-icons/fa6";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon
@@ -26,7 +29,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close' | 'wallet' | 'grid' | 'settings' | 'merge' | 'discord' | 'twitter'; 
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close' | 'wallet' | 'grid' | 'settings' | 'merge' | 'discord' | 'twitter' | 'transfer' | 'search' | 'check'; 
 
 interface IconProps {
   /**
@@ -77,7 +80,10 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   settings: IoMdSettings,
   merge: BiMerge,
   discord: FaDiscord,
-  twitter: FaTwitter
+  twitter: FaTwitter,
+  transfer: TbTransferVertical,
+  search: IoMdSearch,
+  check: FaCheck
 }
 
 export function Icon(props: IconProps) {

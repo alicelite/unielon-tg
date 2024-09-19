@@ -47,7 +47,7 @@ export function TabBar(props: TabBarProps) {
     return (
       <Row>
         {items.map((v) => {
-          const isSelected = v.key === tabKey;
+          const isSelected = v.key == tabKey;
           const reach = isSelected;
           return (
             <Column
@@ -79,7 +79,7 @@ export function TabBar(props: TabBarProps) {
   return (
     <Row justifyCenter>
       {items.map((v, index) => {
-        const isSelected = v.key === tabKey;
+        const isSelected = v.key == tabKey;
         if (progressEnabled && index > progress) {
           return (
             <Column key={v.key}>

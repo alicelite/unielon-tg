@@ -1,5 +1,6 @@
 import { blockcypher, cardinals, cardinalsV3, cardinalsV4 } from '../api';
-import { satoshisToDOGE } from '../ui/utils';
+import { amountToBn, satoshisToDOGE } from '../ui/utils';
+import { DRC20TransferHistory } from './types';
 
 export async function getBalance(address: string) {
   const formData = new FormData();
@@ -89,4 +90,148 @@ export async function broadcastDogeTrade(tx_hex: string) {
     const msg = JSON.parse(error?.message)
     return msg;
   }  
+}
+export async function getAllSummary(): Promise<any> {
+  try {
+    const response = await cardinalsV3.url('/swap/price').post();
+    const res: any = await response.json();
+    return res?.data;
+  } catch (error: any) {
+    const msg = JSON.parse(error?.message)
+    return msg;
+  }
+}
+export async function getPopularTokenList(address: string): Promise<any> {
+  const params = { receive_address: address };
+  try {
+    const response = await cardinalsV3.url('/drc20/popular').post(params);
+    const res: any = await response.json();
+    const drc20Lists = res.data || []
+    const newData = drc20Lists?.map((item: any) => ({ ...item, isdrc20: true }))
+    return newData
+  } catch (error: any) {
+    const msg = JSON.parse(error?.message)
+    return msg;
+  }
+}
+
+export async function getAddressTokenList(address: string, cursor: number, size: number): Promise<any> {
+  const response: any = await cardinalsV3.url('/drc20/address').post({ receive_address: address, limit: size, offset: cursor })
+  const res: any = await response.json();
+  const drc20Lists = res.data || []
+  const newData = drc20Lists?.map((item: any) => ({ ...item, isdrc20: true }))
+  const list = {
+    list: [...newData],
+    total: res?.total,
+  }
+  if (res.code !== 200) {
+    throw new Error('server exception');
+  }
+  return list
+}
+
+export async function getDRC20TransferHistory(limit: number,receive_address: string, offset?: number): Promise<DRC20TransferHistory> {
+  const params: any = {
+    limit: limit,
+    receive_address: receive_address
+  }
+  if(offset === 0 || offset) {
+    params.offset = offset
+  }
+  const response: any = await cardinalsV3.url('/orders/address').post(params)
+  const res: any = await response.json();
+  const orderInfo = res.data || []
+  if (res.code !== 200) {
+    throw new Error('server exception');
+  }
+  return orderInfo
+}
+
+export async function getAddressTokenBalances(address: string): Promise<any> {
+  try {
+    console.log('getAddressTokenBalances');
+    let allSummary = [];
+    try {
+      allSummary = await getAllSummary();
+    } catch (error) {
+      console.log('Error in getAllSummary:', error);
+    }
+    const dogePriceInfo: any = await getDogePrice();
+    const popularTokenList = await getPopularTokenList(address);
+    
+    const localData = (await new Promise((resolve) => {
+      const storedData = localStorage.getItem('drc20TokenInfo');
+      const parsedData = storedData ? JSON.parse(storedData) : {};
+      const result = parsedData[address] ? parsedData[address] : [];
+      resolve(result);
+    })) as Array<any>;
+    
+    let page = 0;
+    const perPage = 1000;
+    const myDrc20s = await getAddressTokenList(address, page, perPage);
+
+    if (myDrc20s?.list?.length === perPage) {
+      page++;
+      const nextPageDrc20s = await getAddressTokenList(address, page * perPage, perPage);
+      myDrc20s.list = myDrc20s.list.concat(nextPageDrc20s.list);
+    }
+    const swapDrc20 = myDrc20s.list.filter((item: any) => item.tick.length >= 10);
+    let drc20s = popularTokenList.concat(swapDrc20);
+    
+    if (localData?.length) {
+      localData?.forEach(data => {
+        const dataItem = myDrc20s?.list?.find((dataEntry: { tick: any; }) => dataEntry.tick === data.tick);
+        if (dataItem) {
+          data.amt = dataItem.amt;
+        } else {
+          data.amt = 0;
+        }
+      });
+    }
+    
+    console.log(allSummary, 'allSummary=====');
+    drc20s.forEach((inputEntry: { tick: any; amt: any; }) => {
+      const existingEntryIndex = localData?.findIndex(dataEntry => dataEntry.tick === inputEntry.tick);
+      if (existingEntryIndex !== -1) {
+        localData[existingEntryIndex].amt = inputEntry.amt;
+      } else {
+        localData.push(inputEntry);
+      }
+    });
+    
+    const outputArray = localData.map(entry => ({ 'amt': entry.amt, 'tick': entry.tick, 'isHide': entry.isHide, 'isdrc20': entry.isdrc20 }));
+    drc20s = [...outputArray];
+    
+    const allListInfo =
+      drc20s?.length > 0 && allSummary?.length > 0
+        ? drc20s.map((item: { tick: string | any[]; isdrc20: any; }) => {
+          const tickItem = allSummary.find((i: { tick: string | any[]; }) => i.tick === item.tick);
+          const total_price = item.tick.length > 10 && item.tick === 'WDOGE(WRAPPED-DOGE)'
+            ? dogePriceInfo.last
+            : (dogePriceInfo.last * (tickItem?.last_price || 0));
+          const last_price = amountToBn(tickItem?.last_price);
+          return { ...item, ...tickItem, last_price, total_price, isdrc20: item.isdrc20 };
+        })
+        : drc20s;
+    
+    const allList = Array.from(new Set(allListInfo.map((item: { tick: any; }) => item.tick))).map(tick => {
+      return allListInfo.find((item: { tick: unknown; }) => item.tick === tick);
+    });
+    
+    const list = {
+      list: [...allList],
+      total: allList?.length,
+    };
+    
+    const info: any = {};
+    info[address] = [...allList];
+    const drc20TokenInfo = info;
+    localStorage.setItem('drc20TokenInfo', JSON.stringify(drc20TokenInfo));
+    
+    console.log(list, '----list');
+    return list;
+  } catch (error) {
+    console.log(error);
+    throw new Error('server exception');
+  }
 }

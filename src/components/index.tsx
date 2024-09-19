@@ -23,7 +23,7 @@ import { RefreshButton } from './RefreshButton';
 import { AddressTypeCard } from './AddressTypeCard';
 import { NavTabBar } from './NavTabBar';
 import { RemoveWalletPopover } from './RemoveWalletPopover';
-
+import { Empty } from './Empty';
 export {
   Button,
   Footer,
@@ -49,5 +49,6 @@ export {
   RefreshButton,
   AddressTypeCard,
   RemoveWalletPopover,
-  NavTabBar
-};
+  NavTabBar,
+  Empty,
+}

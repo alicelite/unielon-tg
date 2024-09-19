@@ -46,7 +46,8 @@ const $baseContainerStyle: CSSProperties = {
   paddingBottom: 11,
   borderRadius: 5,
   minHeight: '36.5px',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  width: '100%'
 };
 
 const $baseInputStyle: CSSProperties = Object.assign({}, $textPresets.regular, {

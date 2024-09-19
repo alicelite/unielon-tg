@@ -21,9 +21,7 @@ const retryOptions = retry({
   skip: (_, opts) => opts.method !== 'GET',
 });
 
-export const cardinalsV3 = wretch(CARDINALS_API_V3_URL).middlewares([
-  retryOptions,
-]);
+export const cardinalsV3 = wretch(CARDINALS_API_V3_URL)
 
 export const cardinalsV4 = wretch(CARDINALS_API_V4_URL).middlewares([
   retryOptions,
