@@ -7,16 +7,16 @@ import {
   Routes,
   useNavigate,
 } from 'react-router-dom';
-import { initViewport } from '@telegram-apps/sdk';
+// import { initViewport } from '@telegram-apps/sdk';
 import routesConfig from './routes/index';
 import "./assets/style/var.less";
 import React from "react";
-const [viewport] = initViewport();
-const vp = await viewport;
+// const [viewport] = initViewport();
+// const vp = await viewport;
 
-if (!vp.isExpanded) {
-    vp.expand();
-}
+// if (!vp.isExpanded) {
+//     vp.expand();
+// }
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;

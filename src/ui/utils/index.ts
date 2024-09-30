@@ -109,3 +109,16 @@ export const amountToDec = (val: BigNumber.Value) => {
   if(!val) return '' 
   return new BigNumber(val).dividedBy(new BigNumber(10).pow(8))
 }
+
+export const generateOperationRecords = (data: any, repeat: number) => {
+  const { currentTicker, currentAmout } = data;
+  const operationRecord = {
+    p: 'drc-20',
+    op: 'mint',
+    tick: currentTicker,
+    amt: currentAmout?.toString(),
+  };
+
+  const operationRecords = Array(repeat).fill(operationRecord);
+  return operationRecords
+}

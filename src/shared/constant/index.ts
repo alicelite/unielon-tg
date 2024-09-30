@@ -18,6 +18,18 @@ export const CHAINS: Record<string, Chain> = {
   }
 };
 
+export const CONFIRMATION_ERROR = {
+  data: null,
+  code: 500,
+  msg: 'There are other unfinished operations at the current address. Please wait for completion before submitting.'
+};
+
+export const INSUFFICIENT_BALANCE_ERROR = {
+  code: 500,
+  msg: 'The balance is insufficient to complete this transaction',
+  data: null
+}
+
 export const ADDRESS_TYPES: {
   value: AddressType;
   label: string;
@@ -52,13 +64,13 @@ export const blockstreamUrl = 'https://blockchair.com/dogecoin'
 
 export const COIN_DUST = 1000000;
 
-export const OPENAPI_URL_MAINNET = 'https://unielon.com';
+export const OPENAPI_URL_MAINNET = 'https://api.unielon.com';
 export const OPENAPI_URL_TESTNET = 'https://future-api.unielon.com';
 export const GITHUB_URL = 'https://github.com/unielon-org/unielon-wallet';
 export const DISCORD_URL = 'https://discord.gg/unielonwallet';
 export const TWITTER_URL = 'https://twitter.com/unielonwallet';
-export const CARDINALS_API_V3_URL = 'https://unielon.com/v3';  
-export const CARDINALS_API_V4_URL = 'https://unielon.com/v4';  
+export const CARDINALS_API_V3_URL = 'https://api.unielon.com/v3';  
+export const CARDINALS_API_V4_URL = 'https://api.unielon.com/v4';  
 export const CARDINALS_API_URL = 'https://utxo.unielon.com';
 export const BLOCKCYPHER_URL = 'https://api.blockcypher.com/v1';
 export const GATEAPI_URL = 'https://data.gateapi.io';

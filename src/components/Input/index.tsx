@@ -127,7 +127,6 @@ export const AddressInput = (props: InputProps) => {
       setValidAddress('');
     }
     try {
-      // const bitcoin = require('bitcoinjs-lib')
       const isValid = bitcoin.address.toOutputScript(inputAddress, network)
       if (!isValid) {
         setFormatError('Recipient address is invalid')

@@ -24,6 +24,8 @@ import { AddressTypeCard } from './AddressTypeCard';
 import { NavTabBar } from './NavTabBar';
 import { RemoveWalletPopover } from './RemoveWalletPopover';
 import { Empty } from './Empty';
+import { HideTokenPopover } from './HideTokenPopover';
+import { TextArea } from './TextArea';
 export {
   Button,
   Footer,
@@ -51,4 +53,6 @@ export {
   RemoveWalletPopover,
   NavTabBar,
   Empty,
+  HideTokenPopover,
+  TextArea
 }

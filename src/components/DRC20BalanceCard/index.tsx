@@ -18,7 +18,7 @@ export default function DRC20BalanceCard(props: DRC20BalanceCard) {
   return (
     <Card
       style={{
-        backgroundColor: '#141414',
+        backgroundColor: 'rgb(42, 38, 38)',
         borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
         width: '100%',

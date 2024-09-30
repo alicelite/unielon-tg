@@ -114,3 +114,36 @@ export interface DRC20TransferHistory {
   limit: number;
   receive_address: string
 }
+export interface AddressTokenSummary {
+  max_amt: number;
+  mint_amt: number;
+  tick: string;
+  lim: number
+}
+
+export interface RawTxInfo {
+  opType: string;
+  transferType: string | '';
+  receiveAddressLength: number | 1;
+  ticker: any;
+  sendAmout: number | string;
+  totalFee: string | number;
+  _account: string;
+  receiver: string;
+  feeAmount: string | number
+  rawtx: any;
+  toAddressInfo?: ToAddressInfo;
+  fee?: number;
+  utxo: {
+    txId: any;
+    outputIndex: number;
+    script: string;
+    address: any;
+    satoshis: number;
+  };
+  destinationAddress: string;
+  amountToSend: number;
+  changeAddress: string;
+  privateKey: any;
+  fromAddress: string
+}

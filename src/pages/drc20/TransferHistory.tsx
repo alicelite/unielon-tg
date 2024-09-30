@@ -40,7 +40,7 @@ interface MyItemProps {
 
 const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
   const navigate = useNavigate();
-
+  console.log('group', group);
   return (
     <>
       {group?.op === 'transfer' && (

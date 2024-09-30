@@ -1,5 +1,7 @@
+import { inscribeDrc, dogeCoin, DrcInscriptionData, PrevOutput } from "@unielon/coin-dogecoin";
 import { amountToSaothis, getLocalValue, satoshisToDOGE, setLocalValue } from ".";
-import { WALLET } from "../../shared/constant";
+import { broadcastDogeTrade, getUtoxsInfo } from "../../shared/cardinals";
+import { CONFIRMATION_ERROR, WALLET } from "../../shared/constant";
 import { accountActions } from "../state/accounts/reducer";
 import { decrypt, encrypt, generateAddress, generateChild, generateRoot } from "./wallet";
 export const decryptWallet = () => {
@@ -145,3 +147,146 @@ export const getBroadcastInfo = (address: string) => {
     }
   });
 };
+
+export const getUtxoList = (address: string | number) => {
+  return new Promise((resolve) => {
+    const storedData = localStorage.getItem('utxoList');
+    const utxoList = storedData ? JSON.parse(storedData) : {};
+    console.log(utxoList, '----res------');
+    const result = utxoList[address] || {};
+
+    if (result.utxoTxid) {
+      resolve(result.utxoTxid);
+    } else {
+      resolve([]);
+    }
+  });
+}
+
+export const collectUtxosUntilBalance = async (targetBalance: number, address: string, initialTotalValue: number, type?: string) => {
+  const storedTxids: any = await getUtxoList(address)
+  console.log(storedTxids, 'storedTxids------')
+  let accumulatedAmount = 0;
+  let collectedUtxos = [];
+  let total = 0
+  console.log(initialTotalValue, 'initialTotalValue------', accumulatedAmount, amountToSaothis(targetBalance))
+  while (accumulatedAmount < amountToSaothis(targetBalance)) {
+    const apiResponse: any = await getUtoxsInfo(address, Number(initialTotalValue) + Number(accumulatedAmount), '10000000');
+    // Extract txid values
+    console.log(apiResponse, 'apiResponse------')
+    const filteredArr = apiResponse?.utxos?.filter((item: { satoshis: number; }) => item.satoshis > 0.005);
+    const newTxids = filteredArr?.map((txId: any) => txId);
+    console.log(newTxids, 'newTxids-----', apiResponse?.utxos)
+    // Find common txids between the API response and stored txids
+    const commonTxids = storedTxids?.filter((txid: any) => newTxids?.includes(txid));
+    console.log(commonTxids, 'commonTxids------')
+    // Check for duplicates and accumulated value
+    const uniqueUtxos = type === 'sendFile' ? filteredArr : filteredArr?.filter(( txId: any) => !commonTxids?.includes(txId));
+    console.log(uniqueUtxos, 'uniqueUtxos-----')
+    const accumulatedValue = uniqueUtxos?.reduce((sum: number, entry: { satoshis: any; }) => {
+      const satoshis = amountToSaothis(entry.satoshis);
+      return sum + satoshis;
+    }, 0);
+    total = accumulatedValue
+    if(accumulatedValue === 0 && apiResponse?.amount === targetBalance) break;
+    console.log(accumulatedValue, 'accumulatedValue-----', targetBalance)
+    console.log(initialTotalValue, 'initialTotalValue-----')
+    // Check if the accumulated value meets or exceeds the target balance
+    if (accumulatedValue >= initialTotalValue) {
+      collectedUtxos = uniqueUtxos;
+      break;
+    }
+    console.log(apiResponse?.amount, 'amount-----')
+    const apiAmount = amountToSaothis(apiResponse?.amount);
+    console.log(apiAmount, 'apiAmount------', accumulatedAmount)
+    accumulatedAmount = +accumulatedValue === 0 ? Number(apiAmount) + (+initialTotalValue) : accumulatedValue + apiAmount
+    console.log(accumulatedAmount, 'accumulatedAmount-----')
+  }
+  console.log(collectedUtxos, 'collectedUtxos====', total)
+  collectedUtxos = collectedUtxos.length === 0 ? [] : collectedUtxos;
+  if(type === 'sendDoge' && !collectedUtxos?.length) {
+    return {
+      total: total
+    }
+  }
+  return collectedUtxos;
+}
+export const getUnspendUtxos = async(unspentOutputs: { address: any; vout: any; value: any; txid: any; amount: any; }[], privateKey: any) => {
+  console.log(unspentOutputs, 'unspentOutputs===33==')
+  const utoxs = unspentOutputs?.map(({ address, vout, value, txid }) => ({
+    address,
+    vOut: vout,
+    amount: amountToSaothis(value),
+    txId: txid,
+    privateKey
+  }));
+  return utoxs
+}
+
+export const createDrcInscription = async(inscriptionParams: string, account: any, privateKey: any, balance: { amount: string | number; }, utxoTotal: any, repeat?: any, type?: string) => {
+  // const unspentOutputs = await collectUtxosUntilBalance(+balance.amount, account, utxoTotal)
+  const apiResponse: any = await getUtoxsInfo(account, utxoTotal, '10000000');
+  // Extract txid values
+  console.log(apiResponse, 'apiResponse------')
+  const unspentOutputs = apiResponse?.utxo
+  console.log(balance, 'balance------', unspentOutputs)
+  const utxos = await getUnspendUtxos(unspentOutputs, privateKey)
+  const commitTxPrevOutputList: PrevOutput[] = [];
+  commitTxPrevOutputList.push(...utxos);
+  console.log(utxos, 'utxos-----<<<<<')
+  if(!utxos.length) {
+    return { ...CONFIRMATION_ERROR }
+  }
+  const parseParams = JSON.parse(inscriptionParams)
+  const inscriptionDataList: DrcInscriptionData[] = [];
+  if(type === 'transfer') {
+    const { p, op, tick, amt } = parseParams
+    const params = {
+      p, op, tick, amt
+    }
+    const inscriptionParams = JSON.stringify(params)
+    inscriptionDataList.push({
+      contentType: 'text/plain;charset=utf-8',
+      body: `${inscriptionParams}`,
+      revealAddr: account,
+      repeat: repeat || 1,
+      receiveAddr: parseParams.receiveAddr
+    });
+  } else {
+    inscriptionDataList.push({
+      contentType: 'text/plain;charset=utf-8',
+      body: `${inscriptionParams}`,
+      revealAddr: account,
+      repeat: repeat || 1
+    });
+  }
+  
+  const request = {
+    commitTxPrevOutputList,
+    commitFeeRate: 50000,
+    revealFeeRate: 50000,
+    inscriptionDataList,
+    changeAddress: account,
+  };
+  console.log(request, 'request-------<<<')
+  const inscribeDrcInfo =  inscribeDrc(dogeCoin, request)
+  console.log(inscribeDrcInfo, 'inscribeDrcInfo========')
+  let boardcastCallback
+  let boardcastCallbackFee
+  if(inscribeDrcInfo?.commitTx) {
+    boardcastCallback = await broadcastDogeTrade(inscribeDrcInfo?.commitTx)
+    console.log(boardcastCallback, 'boardcastCallback------<<<<sss')
+    boardcastCallbackFee = await broadcastDogeTrade(inscribeDrcInfo?.revealTxs[0])
+    return {
+      inscribeDrcInfo,
+      boardcastCallback,
+      boardcastCallbackFee,
+      utxos
+    }
+  }
+  return {
+    inscribeDrcInfo,
+    boardcastCallback,
+    utxos
+  }
+}

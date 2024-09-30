@@ -197,7 +197,8 @@ function DRC20List() {
   if (total === -1) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <LoadingOutlined />
+        <Text text="Loading..." size="sm" color="gold" />
+        <LoadingOutlined style={{color: 'gold', fontSize: 20}} />
       </Column>
     );
   }
@@ -237,7 +238,7 @@ function DRC20List() {
                   key={index}
                   tokenBalance={data}
                   onClick={() => {
-                    navigate('DRC20TokenScreen', { state : {tokenBalance: data.amt, ticker: data.tick }});
+                    navigate('/drc20/token', { state : {tokenBalance: data.amt, ticker: data.tick }});
                   }}
                 />
               )}

@@ -54,6 +54,14 @@ const routes: Route[] = [
       {
         path: "add-token",
         element: React.lazy(() => import("../pages/drc20/AddDRC20Token")),
+      },
+      {
+        path: "token",
+        element: React.lazy(() => import("../pages/drc20/DRC20TokenScreen")),
+      },
+      {
+        path: "send",
+        element: React.lazy(() => import("../pages/drc20/DRC20SendScreen")),
       }
     ]
   },
