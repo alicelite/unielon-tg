@@ -83,7 +83,7 @@ export async function getFeeSummary() {
 export async function broadcastDogeTrade(tx_hex: string) {
   const params = { tx_hex: tx_hex };
   try {
-    const response = cardinalsV3.url('/tx/broadcast').post(params);
+    const response = cardinals.url('/broadcast').post(params);
     const res = await response.json();
     return res;
   } catch (error: any) {
@@ -93,7 +93,7 @@ export async function broadcastDogeTrade(tx_hex: string) {
 }
 export async function getAllSummary(): Promise<any> {
   try {
-    const response = await cardinalsV3.url('/swap/price').post();
+    const response = await cardinalsV4.url('/swap/price').post();
     const res: any = await response.json();
     return res?.data;
   } catch (error: any) {

@@ -78,7 +78,7 @@ const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
                     <Text text="Received" color="textDim" />
                     <Text text={`${amountToDec(group?.amt)} ${group?.tick}`} preset="bold" color="gold" />
                     <Text text="from" color="textDim" />
-                    {group?.receive_address.split(',').map((address: any, index: any) => (
+                    {group?.to_address.split(',').map((address: any, index: any) => (
                       <Text key={index} text={formatAccountAddress(address)} color="textDim" />
                     ))}
                   </Row>
