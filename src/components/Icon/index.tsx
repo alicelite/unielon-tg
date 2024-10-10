@@ -22,6 +22,8 @@ import { FaTwitter } from "react-icons/fa";
 import { TbTransferVertical } from "react-icons/tb";
 import { IoMdSearch } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
+import { FaUser } from "react-icons/fa";
+import { FaAngleDown } from "react-icons/fa";
 export const svgRegistry = {
   doge: dogeIcon,
   success: successIcon
@@ -29,7 +31,7 @@ export const svgRegistry = {
 
 const iconImgList: Array<IconTypes> = ['success', 'doge'];
 
-export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close' | 'wallet' | 'grid' | 'settings' | 'merge' | 'discord' | 'twitter' | 'transfer' | 'search' | 'check'; 
+export type IconTypes = keyof typeof svgRegistry | 'send' | 'receive' | 'history' | 'copy' | 'eye' | 'eye-slash' | 'checked' | 'edit' | 'key' | 'delete' | 'close' | 'wallet' | 'grid' | 'settings' | 'merge' | 'discord' | 'twitter' | 'transfer' | 'search' | 'check' | 'user' | 'down'; 
 
 interface IconProps {
   /**
@@ -83,7 +85,9 @@ const iconComponents: { [key in IconTypes]?: React.ComponentType<{ color?: strin
   twitter: FaTwitter,
   transfer: TbTransferVertical,
   search: IoMdSearch,
-  check: FaCheck
+  check: FaCheck,
+  user: FaUser,
+  down: FaAngleDown
 }
 
 export function Icon(props: IconProps) {

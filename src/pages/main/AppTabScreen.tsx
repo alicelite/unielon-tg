@@ -3,16 +3,16 @@ import { useState } from 'react';
 import { useTools } from '../../components/ActionComponent';
 import { amountToSaothis } from '@/ui/utils';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { broadcastDogeTrade, getUtoxsInfo } from '../../shared/cardinals';
 import { useCreateDogecoinTxCallback } from '@/ui/state/transactions/hooks';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function AppTabScrren() {
   const tools = useTools();
   // @ts-ignore
   const [canClick, setCanClick] = useState(false)
   const accountBalance = useAccountBalance();
-  const currentAccount = useCurrentAccount();
+  const currentAccount: any = useCurrentKeyring();
   const createDogecoinTx = useCreateDogecoinTxCallback();
 
   const handleMergeUtxos = async () => {
@@ -35,7 +35,6 @@ export default function AppTabScrren() {
       }
       const commitTx = await createDogecoinTx(toInfo, mergAmount, 50000000, unspentOutputs.utxo);
       const res = await broadcastDogeTrade(commitTx)
-      console.log('res', res);
       const txid = (res as { data: { tx_hash: string } })?.data?.tx_hash;
       if(txid) {
         tools.showLoading(false);

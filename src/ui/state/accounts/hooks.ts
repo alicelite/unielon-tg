@@ -1,5 +1,8 @@
+import { useCallback } from 'react';
 import { AppState } from '..';
-import { useAppSelector } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { Account } from '../../../shared/types';
+import { accountActions } from './reducer';
 
 
 export function useAccountsState(): AppState['accounts'] {
@@ -25,4 +28,14 @@ export function useAccountBalance() {
 export function useAccountAddress() {
   const currentAccount = useCurrentAccount();
   return currentAccount.address;
+}
+
+export function useSetCurrentAccountCallback() {
+  const dispatch = useAppDispatch();
+  return useCallback(
+    (account: Account) => {
+      dispatch(accountActions.setCurrent(account));
+    },
+    [dispatch]
+  );
 }

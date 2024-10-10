@@ -63,7 +63,18 @@ export const NETWORK_TYPES = [
 export const blockstreamUrl = 'https://blockchair.com/dogecoin'
 
 export const COIN_DUST = 1000000;
-
+export const network = {
+  messagePrefix: '\x19Dogecoin Signed Message:\n',
+  bech32: 'dc',
+  bip44: 3,
+  bip32: {
+    public: 0x02facafd,
+    private: 0x02fac398,
+  },
+  pubKeyHash: 0x1e,
+  scriptHash: 0x16,
+  wif: 0x9e,
+};
 export const OPENAPI_URL_MAINNET = 'https://api.unielon.com';
 export const OPENAPI_URL_TESTNET = 'https://future-api.unielon.com';
 export const GITHUB_URL = 'https://github.com/unielon-org/unielon-wallet';

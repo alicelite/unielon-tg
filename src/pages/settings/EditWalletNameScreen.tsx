@@ -23,10 +23,10 @@ export default function EditWalletNameScreen() {
         item.alianName = alianName
       }
     })
-    dispatch(accountActions.setAccounts(accountInfo));
     const newKeyring = JSON.parse(JSON.stringify(keyring));
     newKeyring.alianName = alianName
     dispatch(accountActions.setCurrent(newKeyring));
+    dispatch(accountActions.setAccounts(accountInfo));
     navigate('/account/switch-keyring')
   };
 

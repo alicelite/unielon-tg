@@ -26,6 +26,8 @@ import { RemoveWalletPopover } from './RemoveWalletPopover';
 import { Empty } from './Empty';
 import { HideTokenPopover } from './HideTokenPopover';
 import { TextArea } from './TextArea';
+import { AccountSelect } from './AccountSelect';
+
 export {
   Button,
   Footer,
@@ -54,5 +56,6 @@ export {
   NavTabBar,
   Empty,
   HideTokenPopover,
-  TextArea
+  TextArea,
+  AccountSelect
 }

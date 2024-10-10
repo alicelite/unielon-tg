@@ -27,9 +27,7 @@ function Step1({
   const currentAccount = useCurrentAccount();
  
   useEffect(() => {
-    console.log(receiverAddresses, 'sendAmout=====', sendAmout)
     const resultArray = typeof receiverAddresses === 'string' ? receiverAddresses?.split(',') : [...receiverAddresses]
-    console.log(resultArray, 'resultArray====', contextData.tokenBalance)
     if(amountToSaothis(+resultArray?.length * (+sendAmout)) >  +contextData.tokenBalance) {
       setExceedsError('The amount of tokens exceeds the balance')
     } else {
@@ -45,7 +43,6 @@ function Step1({
       const yourPrivateKeyWIF = phrase && newAccount ? getPrivateKey(phrase) : wif
       const _account = contextData.account
       if(!_account || !contextData?.feeRate || !contextData?.receiver) return
-      console.log(sendAmout, 'sendAmout=====kkk', amountToBn(sendAmout))
       const receiverList = contextData?.receiver?.split(',');
       const rawTxInfo = {
         transferType: transferType,
@@ -63,7 +60,6 @@ function Step1({
         _account: contextData?.account,
         receiver: contextData?.receiver,
       }
-      console.log(rawTxInfo, 'rawTxInfo=======<<<<,')
       navigate('/tx-confirm', { state: { rawTxInfo } })
     } catch (error) {
       const dataError = (error as any).message;
@@ -74,7 +70,6 @@ function Step1({
   };
   const handleChange = (value: string) => {
     setTransferType(value)
-    console.log(`selected ${value}`);
   }
   const receiverAddresPlaceholder = 'Please enter addresses separated by commas'
   const [exceedsError, setExceedsError] = useState('')

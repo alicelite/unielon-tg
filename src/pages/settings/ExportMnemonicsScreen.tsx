@@ -23,7 +23,7 @@ export default function ExportMnemonicsScreen() {
     try {
       const rightPassword = localStorage.getItem('password');
       if(rightPassword == password) {
-        const mnemonic = keyring.phrase
+        const mnemonic: any = keyring.phrase
         setMnemonic(mnemonic);
       } else {
         setError('Incorrect password');

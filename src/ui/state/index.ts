@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 import ui from './ui/reducer';
 import accounts from './accounts/reducer';
 import transactions from './transactions/reducer';
+import keyrings from './keyrings/reducer';
 
 const persistConfig = {
   key: 'root',
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   ui,
   accounts,
   transactions,
+  keyrings
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

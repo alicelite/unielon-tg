@@ -12,6 +12,7 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { colors } from '@/ui/theme/colors';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { keyringsActions } from '../../ui/state/keyrings/reducer';
 export function MyItem(props: any, ref: any) {
   const { keyring } = props.items;
   const { address, alianName } = keyring;
@@ -29,6 +30,12 @@ export function MyItem(props: any, ref: any) {
         ref={ref}
         onClick={async () => {
           if (address !== props.account) {
+            if (keyring.accounts) {
+              const list = keyring.accounts.find((v: any) => v.address === address);
+              dispatch(keyringsActions.setCurrent(list));
+            } else {
+              dispatch(keyringsActions.setCurrent(keyring));
+            }
             dispatch(accountActions.setCurrent(keyring));
           }
           navigate('/home')

@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { Button, Content, Header, Layout, Row } from '@/components';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import TokenList from '../../components/DRC20TokenList';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function AddDRC20Token() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [drcTokens, setDrcTokens] = useState(state?.tokens)
-  const address = useAccountAddress();
+  const currentAccount: any = useCurrentKeyring();
+  const { address } = currentAccount;
   const [canClick, setCanClick] = useState(true)
   const [allTokenList, setAllTokenList] = useState([])
   const handleLocalStorage = (result: any) => {

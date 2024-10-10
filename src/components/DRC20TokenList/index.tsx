@@ -3,9 +3,9 @@ import { Column, Icon, Input, Row, Text } from '@/components';
 import { Checkbox } from 'antd';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { drcToDec } from '@/ui/utils';
 import { getAddressTokenList } from '../../shared/cardinals';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function TokenList(props: any) {
   const { addDrc20Token, selectedTicks, drcTokens, onTokenListChange, handleSelectAll } = props
@@ -19,14 +19,14 @@ export default function TokenList(props: any) {
   const [tokenList, setTokenList] = useState<any[]>([])
   const [currentToken, setCurrentToken] = useState<any[]>([]);
   const [ticker, setTicker] = useState('')
-  const address = useAccountAddress();
+  const currentAccount: any = useCurrentKeyring();
+  const { address } = currentAccount;
   const [hasMore, setHasMore] = useState(true)
   const [loaderText, setLoaderText] = useState('Loading...')
   const getTokenInfo = async () => {
     const { list } = await getAddressTokenList(address, page, 1000)
     const concatList = [...list]
     const result = tokenList.concat(...concatList)
-    console.log(result, 'result=====')
     if(list?.length < 50) {
       setHasMore(false)
     }

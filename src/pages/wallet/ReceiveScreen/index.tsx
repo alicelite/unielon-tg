@@ -3,10 +3,10 @@ import { Content, Header, Text, AddressBar, Icon, Layout, Column, Row } from '@/
 import { sizes } from '@/ui/theme/spacing';
 
 import './index.less';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '../../../ui/state/keyrings/hooks';
 
 export default function ReceiveScreen() {
-  const currentAccount = useCurrentAccount();
+  const currentAccount: any = useCurrentKeyring();
   const { address } = currentAccount;
 
   return (

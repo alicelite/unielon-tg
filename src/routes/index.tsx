@@ -92,6 +92,14 @@ const routes: Route[] = [
       {
         path: "add-keyring",
         element: React.lazy(() => import("../pages/account/AddKeyringScreen")),
+      },
+      {
+        path: "switch-account",
+        element: React.lazy(() => import("../pages/account/SwitchAccountScreen")),
+      },
+      {
+        path: "create",
+        element: React.lazy(() => import("../pages/account/CreateAccountScreen")),
       }
     ]
   },
@@ -111,6 +119,10 @@ const routes: Route[] = [
         path: "export-private-key",
         element: React.lazy(() => import("../pages/settings/ExportPrivateKeyScreen")),
       },
+      {
+        path: "edit-account-name",
+        element: React.lazy(() => import("../pages/settings/EditAccountNameScreen")),
+      }
     ]
   },
   {

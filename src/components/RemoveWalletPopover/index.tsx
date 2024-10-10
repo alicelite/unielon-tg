@@ -13,6 +13,10 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { shortAddress } from '@/ui/utils';
 import { useAccounts } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
+import { setLocalValue } from '../../ui/utils';
+import { WALLET } from '../../shared/constant';
+import { encrypt } from '../../ui/utils/wallet';
+import { keyringsActions } from '../../ui/state/keyrings/reducer';
 
 export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyring; onClose: () => void }) => {
   const accounts = useAccounts();
@@ -68,6 +72,11 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
             full
             onClick={async () => {
               const newAccounts = accounts.filter((item: any) => item.address !== keyring.address);
+              const password: any = localStorage.getItem('password');
+              const encryptedWallet = encrypt(newAccounts, password);
+              setLocalValue({ [WALLET]: encryptedWallet });
+              dispatch(keyringsActions.setCurrent(newAccounts[newAccounts.length - 1]))
+              dispatch(accountActions.setCurrent(newAccounts[newAccounts.length - 1]));
               dispatch(accountActions.setAccounts(newAccounts));
               onClose();
             }}

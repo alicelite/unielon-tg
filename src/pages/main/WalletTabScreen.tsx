@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card, NavTabBar, Footer, TabBar, Icon, Empty, Input } from '@/components';
+import { useEffect, useState } from 'react';
+import { Column, Content, Header, Layout, Row, Text, AddressBar, Button, Card, NavTabBar, Footer, TabBar, Icon, Empty, Input, AccountSelect } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getDogePrice } from '@/shared/cardinals';
 import { setLocalValue } from '@/ui/utils';
@@ -15,6 +15,7 @@ import React from 'react';
 import { TokenBalance } from '../../shared/types';
 import DRC20BalanceCard from '../../components/DRC20BalanceCard';
 import { getAddressTokenBalances } from '../../shared/cardinals';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function WalletTabScreen() {
   const [totalPrice, setTotalPrice] = useState(0)
@@ -23,18 +24,19 @@ export default function WalletTabScreen() {
   const [balance, setBalance] = useState()
   const [address, setAddress] = useState()
   const currentAccount = useCurrentAccount()
+  const currentKeyring: any = useCurrentKeyring()
   const getDecryptWallet = async () => {
     const { address } = currentAccount;
     setAddress(address)
   }
   const balanceValue = async () => {
-    const res =  await getBalance(address);
+    const res =  await getBalance(currentKeyring.address);
     const balance = res?.balance?.toFixed(4) ?? 0;
     getDogePriceInfo(balance)
     setBalance(balance)
     if(!address) return
     dispatch(accountActions.setBalance({
-        address: address,
+        address: currentKeyring.address,
         amount: balance
     }));
   };
@@ -83,6 +85,7 @@ export default function WalletTabScreen() {
       <Content>
         <Column style={{ gap: '16px' }}>
           <AddressBar />
+          {currentAccount.type === 'HD Key Tree' && <AccountSelect />}
           <Row style={{gap: 0}} justifyCenter>
             <Text text={balance} textCenter size="xxxl" />
             <Text style={{paddingLeft: '4px'}} text="DOGE" textCenter size="xxxl" />
@@ -152,21 +155,19 @@ export default function WalletTabScreen() {
 
 function DRC20List() {
   const navigate = useNavigate();
-  const currentAccount = useCurrentAccount();
+  const currentKeyring: any = useCurrentKeyring()
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [currentToken, setCurrentToken] = useState<TokenBalance[]>([]);
   const [ticker, setTicker] = useState('');
   const [total, setTotal] = useState(-1);
   const [pagination] = useState({ currentPage: 1, pageSize: 100 });
   const tools = useTools();
-  const initialPage = useRef(pagination.currentPage);
 
   const fetchData = async () => {
     try {
       const { list, total } = await getAddressTokenBalances(
-        currentAccount.address
+        currentKeyring.address
       );
-      console.log(list, 'list====,,,,,');
       setTokens(list);
       setCurrentToken(list);
       setTotal(total);
@@ -190,7 +191,6 @@ function DRC20List() {
   };
 
   useEffect(() => {
-    console.log('useEffect', pagination.currentPage, initialPage.current);
     fetchData();
   }, [pagination]);
 

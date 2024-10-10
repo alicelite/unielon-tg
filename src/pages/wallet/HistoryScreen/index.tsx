@@ -10,6 +10,7 @@ import { useCurrentAccount } from '../../../ui/state/accounts/hooks';
 import { shortAddress } from '../../../ui/utils';
 import { getBroadcastInfo, getNewTransferList } from '../../../ui/utils/hooks';
 import { getAddressRecentHistory } from '../../../shared/cardinals';
+import { useCurrentKeyring } from '../../../ui/state/keyrings/hooks';
 interface HistoryItem {
   hash: any;
   receiveAddress: any;
@@ -119,7 +120,7 @@ export default function HistoryScreen() {
   const [showNodata, setShowNodata] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [loaderText] = useState('Loading...')
-  const currentAccount = useCurrentAccount();
+  const currentAccount: any = useCurrentKeyring();
   const { address } = currentAccount;
   const [historyGroups, setHistoryGroups] = useState<GroupItem[]>([])
   // const _historyGroups: GroupItem[] = [];

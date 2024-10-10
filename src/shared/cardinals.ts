@@ -189,7 +189,6 @@ export async function getAddressTokenBalances(address: string): Promise<any> {
       });
     }
     
-    console.log(allSummary, 'allSummary=====');
     drc20s.forEach((inputEntry: { tick: any; amt: any; }) => {
       const existingEntryIndex = localData?.findIndex(dataEntry => dataEntry.tick === inputEntry.tick);
       if (existingEntryIndex !== -1) {
@@ -228,7 +227,6 @@ export async function getAddressTokenBalances(address: string): Promise<any> {
     const drc20TokenInfo = info;
     localStorage.setItem('drc20TokenInfo', JSON.stringify(drc20TokenInfo));
     
-    console.log(list, '----list');
     return list;
   } catch (error) {
     console.log(error);

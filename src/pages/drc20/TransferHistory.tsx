@@ -3,11 +3,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { Layout, Content, Icon, Header, Text, Row, Column, Card, Button, RefreshButton } from '@/components';
 import { ClockCircleFilled } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNavigate } from 'react-router-dom';
 import { amountToDec, formatAccountAddress, shortAddress } from '@/ui/utils';
 import { blockstreamUrl } from '../../shared/constant';
 import { getDRC20TransferHistory } from '../../shared/cardinals';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 interface HistoryItem {
   address: string;
@@ -29,7 +29,7 @@ interface GroupItem {
   historyItems: HistoryItem[];
   index: number;
   op: string;
-  drc20_tx_hash: string;
+  tx_hash: string;
 }
 
 interface MyItemProps {
@@ -40,7 +40,6 @@ interface MyItemProps {
 
 const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
   const navigate = useNavigate();
-  console.log('group', group);
   return (
     <>
       {group?.op === 'transfer' && (
@@ -60,13 +59,13 @@ const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
                       }}
                     />
                   </Row>
-                  {group?.drc20_tx_hash && (
+                  {group?.tx_hash && (
                     <Text
                       style={{ cursor: 'pointer' }}
-                      text={`Hash: ${shortAddress(group?.drc20_tx_hash)}`}
+                      text={`Hash: ${shortAddress(group?.tx_hash)}`}
                       color="textDim"
                       onClick={() => {
-                        window.open(`${blockstreamUrl}/transaction/${group?.drc20_tx_hash}`);
+                        window.open(`${blockstreamUrl}/transaction/${group?.tx_hash}`);
                       }}
                     />
                   )}
@@ -103,7 +102,7 @@ const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
                     textStyle={{ fontSize: '12px' }}
                   />
                 )}
-                {group?.block_hash && (group?.fee_tx_hash || group?.drc20_tx_hash) && (
+                {group?.block_hash && (group?.fee_tx_hash || group?.tx_hash) && (
                   <Button
                     text={group?.transfer_status}
                     preset="success"
@@ -111,7 +110,7 @@ const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
                     textStyle={{ fontSize: '12px' }}
                   />
                 )}
-                {!group?.block_hash && (group?.fee_tx_hash || group?.drc20_tx_hash) && (
+                {!group?.block_hash && (group?.fee_tx_hash || group?.tx_hash) && (
                   <Button
                     text={group?.transfer_status}
                     preset={group?.transfer_status === 'Failed' ? 'failed' : 'primary'}
@@ -129,7 +128,7 @@ const MyItem: React.FC<MyItemProps> = ({ group, index, account }) => {
 };
 
 export default function TransferHistory() {
-  const currentAccount = useCurrentAccount();
+  const currentAccount: any = useCurrentKeyring();
   const [page, setPage] = useState(1);
   const [historyGroups, setHistoryGroups] = useState([]);
   const [showNodata, setShowNodata] = useState(false);
@@ -138,9 +137,9 @@ export default function TransferHistory() {
 
   const getStatus = useCallback((history: any) => {
     return history.map((item: any) => {
-      const { drc20_tx_hash, block_hash, order_status } = item;
+      const { tx_hash, block_hash, order_status } = item;
       item.transfer_status = 'Pending';
-      if (drc20_tx_hash) {
+      if (tx_hash) {
         item.transfer_status = 'In-Progress';
         if (block_hash) {
           item.transfer_status = 'Completed';
@@ -160,7 +159,6 @@ export default function TransferHistory() {
   }, []);
 
   const loadingHistory = async () => {
-    console.log('loadingHistory');
     const history = await getDRC20TransferHistory(50, currentAccount.address, page);
     if (!history?.length) {
       setShowNodata(true);

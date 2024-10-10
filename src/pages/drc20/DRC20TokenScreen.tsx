@@ -3,13 +3,14 @@ import { Button, Column, Content, Header, Icon, Layout, Row, Text, HideTokenPopo
 
 import { DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCurrentAccount } from '../../ui/state/accounts/hooks';
 import { drcToDec } from '../../ui/utils';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function DRC20TokenScreen() {
   const { state } = useLocation();
   const { ticker, tokenBalance } = state;
-  const account = useCurrentAccount();
+  const account: any = useCurrentKeyring();
+
   const [showSetting, setShowSetting] = useState(false)
   const [removeVisible, setRemoveVisible] = useState(false)
 

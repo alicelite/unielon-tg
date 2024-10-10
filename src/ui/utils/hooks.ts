@@ -1,9 +1,11 @@
 import { inscribeDrc, dogeCoin, DrcInscriptionData, PrevOutput } from "@unielon/coin-dogecoin";
 import { amountToSaothis, getLocalValue, satoshisToDOGE, setLocalValue } from ".";
 import { broadcastDogeTrade, getUtoxsInfo } from "../../shared/cardinals";
-import { CONFIRMATION_ERROR, WALLET } from "../../shared/constant";
+import { CONFIRMATION_ERROR, network, WALLET } from "../../shared/constant";
 import { accountActions } from "../state/accounts/reducer";
+import * as bitcoin from 'bitcoinjs-lib';
 import { decrypt, encrypt, generateAddress, generateChild, generateRoot } from "./wallet";
+import { keyringsActions } from "../state/keyrings/reducer";
 export const decryptWallet = () => {
   return new Promise((resolve, reject) => {
     Promise.all([getLocalValue(WALLET)])
@@ -20,6 +22,22 @@ export const decryptWallet = () => {
       });
   });
 };
+export const generatePublicKey = (phrase: string, index: number | string) => {
+  const root = generateRoot(phrase);
+  const derivePath = (index: number) => `m/44'/3'/0'/0/${index}`;
+  const addrNode = root.derivePath(derivePath(Number(index)));
+  const publicKey = addrNode.publicKey.toString('hex');
+  return publicKey
+}
+
+export const generateAddressFromPublicKey = (pubkey: string) => {
+  const pubKeyBuffer = Buffer.from(pubkey, 'hex');
+  return bitcoin.payments.p2pkh({
+    pubkey: pubKeyBuffer,
+    network,
+  }).address;
+}
+
 export const createAndStoreWallet = async (phrase: any, password: any, isImport: boolean, accounts: any, dispatch: any) => {
   const root = generateRoot(phrase);
   const child = generateChild(root, 0);
@@ -31,13 +49,36 @@ export const createAndStoreWallet = async (phrase: any, password: any, isImport:
     return false
   }
   if(!address) return
-  const wallet = {
+  const wallet: any = {
     phrase,
     address,
     type: phrase ? 'HD Key Tree' : 'Simple Key Pair',
     newAccount: !isImport ? true : false,
     alianName: phrase? `HD Wallet #${walletList.length + 1}` : `Simple Wallet #${walletList.length + 1}`
   };
+  if(phrase) {
+    if(!wallet['accounts']) {
+      const currentKeyring = {
+        pubkey: generatePublicKey(phrase, 0),
+        index: 0,
+        address,
+        alianName: 'Account 1',
+        hdPath: "m/44'/3'/0'/0"
+      }
+      wallet['accounts'] = [currentKeyring]
+      dispatch(keyringsActions.setCurrent(currentKeyring));
+    } else {
+      const currentKeyring = {
+        pubkey: generatePublicKey(phrase, wallet.accounts.length - 1),
+        index: wallet.accounts.length - 1,
+        address,
+        alianName: `Account ${wallet.accounts.length - 1}`,
+        hdPath: "m/44'/3'/0'/0"
+      }
+      wallet.accounts.push(currentKeyring)
+      dispatch(keyringsActions.setCurrent(currentKeyring));
+    }
+  }
   dispatch(accountActions.setCurrent(wallet));
   walletList = [...walletList, wallet]
  
@@ -60,9 +101,9 @@ export const privateKeyStoreWallet = async (address: string, password: any, wif:
     type: 'Simple Key Pair',
     alianName: `Simple Wallet #${walletList.length + 1}`
   };
+  dispatch(keyringsActions.setCurrent(wallet));
   dispatch(accountActions.setCurrent(wallet));
   walletList = [...walletList, wallet]
- 
   dispatch(accountActions.setAccounts(walletList));
   const encryptedWallet = encrypt(walletList, password);
   await setLocalValue({ [WALLET]: encryptedWallet });
@@ -152,7 +193,6 @@ export const getUtxoList = (address: string | number) => {
   return new Promise((resolve) => {
     const storedData = localStorage.getItem('utxoList');
     const utxoList = storedData ? JSON.parse(storedData) : {};
-    console.log(utxoList, '----res------');
     const result = utxoList[address] || {};
 
     if (result.utxoTxid) {
@@ -165,7 +205,6 @@ export const getUtxoList = (address: string | number) => {
 
 export const collectUtxosUntilBalance = async (targetBalance: number, address: string, initialTotalValue: number, type?: string) => {
   const storedTxids: any = await getUtxoList(address)
-  console.log(storedTxids, 'storedTxids------')
   let accumulatedAmount = 0;
   let collectedUtxos = [];
   let total = 0
@@ -212,7 +251,7 @@ export const collectUtxosUntilBalance = async (targetBalance: number, address: s
   return collectedUtxos;
 }
 export const getUnspendUtxos = async(unspentOutputs: { address: any; vout: any; value: any; txid: any; amount: any; }[], privateKey: any) => {
-  console.log(unspentOutputs, 'unspentOutputs===33==')
+  console.log(unspentOutputs, 'unspentOutputs=====')
   const utoxs = unspentOutputs?.map(({ address, vout, value, txid }) => ({
     address,
     vOut: vout,

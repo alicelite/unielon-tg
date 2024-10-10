@@ -3,11 +3,11 @@ import { useTools } from '../ActionComponent';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export function AddressBar() {
   const tools = useTools();
-  const currentAccount = useCurrentAccount();
+  const currentAccount = useCurrentKeyring();
   const { address } = currentAccount;
   return (
     <Row

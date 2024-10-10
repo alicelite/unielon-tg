@@ -66,6 +66,7 @@ export interface Account {
   mnemonics?: string;
   wif?: string;
   newAccount?: boolean;
+  hdPath?: string;
 }
 
 export interface Utxo {
@@ -92,12 +93,16 @@ export enum KeyringType {
 };
 
 export type WalletKeyring = {
-  address: string;
+  address?: string;
+  key?: string;
+  index?: number;
   alianName: string;
-  phrase: string;
-  newAccount: boolean;
-  type: string;
+  phrase?: string;
+  newAccount?: boolean;
+  type?: string;
+  accounts?: Account[];
   wif?: string;
+  hdPath?: string;
 };
 
 export interface TokenBalance {
