@@ -7,6 +7,7 @@ import { Account } from '../../shared/types';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '../../ui/state/accounts/reducer';
 import { useAccounts } from '../../ui/state/accounts/hooks';
+import { keyringsActions } from '../../ui/state/keyrings/reducer';
 
 export default function EditAccountNameScreen() {
 
@@ -19,8 +20,14 @@ export default function EditAccountNameScreen() {
   const dispatch = useAppDispatch();
   const currentAccount = useCurrentAccount();
   const handleOnClick = async () => {
+    let currentKeyring: any = {}
     const updatedCurrentAccounts = currentAccount.accounts.map((item: any) => {
       if (item.address === account.address) {
+        currentKeyring = {
+          ...item,
+          alianName: alianName,
+          address: account.address
+        }
         return {
           ...item,
           alianName: alianName,
@@ -29,19 +36,18 @@ export default function EditAccountNameScreen() {
       }
       return item;
     });
+    
     const updatedCurrentAccount = {
       ...currentAccount,
       accounts: updatedCurrentAccounts,
     };
-    if(state.selected) {
-      updatedCurrentAccount.alianName = alianName;
-    }
     const updatedAccounts = accounts.map((item: any) => {
       if (item.phrase === updatedCurrentAccount.phrase) {
         return updatedCurrentAccount;
       }
       return item;
     });
+    dispatch(keyringsActions.setCurrent(currentKeyring));
     dispatch(accountActions.setCurrent(updatedCurrentAccount));
     dispatch(accountActions.setAccounts(updatedAccounts));
     window.history.go(-1);

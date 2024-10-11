@@ -5,8 +5,6 @@ import { Layout, Content, Icon, Header, Text, Row, Column, Card, RefreshButton }
 import { ClockCircleFilled } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { blockstreamUrl } from '@/shared/constant';
-// import { useNavigate } from 'react-router-dom';
-import { useCurrentAccount } from '../../../ui/state/accounts/hooks';
 import { shortAddress } from '../../../ui/utils';
 import { getBroadcastInfo, getNewTransferList } from '../../../ui/utils/hooks';
 import { getAddressRecentHistory } from '../../../shared/cardinals';
@@ -14,6 +12,7 @@ import { useCurrentKeyring } from '../../../ui/state/keyrings/hooks';
 interface HistoryItem {
   hash: any;
   receiveAddress: any;
+  sendAddress?: string;
   height: any;
   address: string;
   amount: number;
@@ -32,8 +31,9 @@ interface MyItemProps {
   index: number;
 }
 const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index }) => {
-  const currentAccount = useCurrentAccount();
+  const currentAccount = useCurrentKeyring();
   const { address } = currentAccount;
+  console.log('group', group);
   // const navigate = useNavigate();
   if (group.index == -1) {
     return (
@@ -56,7 +56,8 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
     <Column key={index} mt="lg">
       <Text text={group.date} color="textDim" />
       {group.historyItems.map((item, index) => {
-        const isReceived = item.amount > 0;
+        console.log(item, 'item===', address)
+        const isReceived = item.amount > 0 && item.sendAddress != address;
         return (
           <Card key={`item_${index}`} style={{background: 'rgb(42, 38, 38)', flexDirection: 'column', alignItems: 'flex-start'}}>
             <Row justifyBetween full itemsCenter mb='lg'>

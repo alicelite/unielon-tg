@@ -22,6 +22,7 @@ export default function ExportPrivateKeyScreen() {
   const btnClick = async () => {
     try {
       const rightPassword = localStorage.getItem('password');
+      console.log(keyring, 'keyring==')
       if(rightPassword == password) {
         const wif: any = keyring.wif
         setPrivateKey(wif);

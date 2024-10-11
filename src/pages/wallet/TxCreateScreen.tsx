@@ -12,9 +12,11 @@ import { UnspentOutputs } from '../../shared/types';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentAccount } from '../../ui/state/accounts/hooks';
+import { useCurrentKeyring } from '../../ui/state/keyrings/hooks';
 
 export default function TxCreateScreen() {
   const currentAccount = useCurrentAccount();
+  const currentKeyring = useCurrentKeyring()
   const { balance } = currentAccount;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ export default function TxCreateScreen() {
   };
 
   useEffect(validateInputs, [toInfo, inputAmount, autoAdjust, feeRate]);
-  const { address } = currentAccount;
+  const { address } = currentKeyring;
   const getUnspentOutputs = async () => {
     const mergAmount = amountToSaothis(inputAmount) + feeRate;
     const unspentOutputs = await getUtoxsInfo(address, mergAmount, '100000000') as UnspentOutputs;

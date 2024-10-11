@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { useCurrentAccount } from '../accounts/hooks';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { AppState } from '..';
 import { getPrivateKey } from '../../utils/wallet';
 import { amountToSaothis } from '../../utils';
 import { dogeCoin, PrevOutput, transaction, TransactionTxs, TransactionData } from '@unielon/coin-dogecoin'
 import { ToAddressInfo } from '../../../shared/types';
+import { useCurrentKeyring } from '../keyrings/hooks';
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
 }
@@ -17,9 +17,10 @@ export function useDogecoinTx() {
 
 export function useCreateDogecoinTxCallback() {
   const dispatch = useAppDispatch();
-  const currentAccount = useCurrentAccount();
+  const currentAccount = useCurrentKeyring();
   return useCallback(
     async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate: number, utxos: any) => {
+      console.log(toAddressInfo, 'toAddressInfo===')
       const { phrase, address, newAccount, wif } = currentAccount
       const yourPrivateKeyWIF = phrase && newAccount ? getPrivateKey(phrase) : wif
       const unspentOutputs = utxos.map((item: any) => {
@@ -39,7 +40,7 @@ export function useCreateDogecoinTxCallback() {
             revealAddr: toAddressInfo.address,
             amount: toAmount
         });
-        const request = {
+        const request: any = {
             commitTxPrevOutputList,
             commitFeeRate: 50000,
             revealFeeRate: 50000,

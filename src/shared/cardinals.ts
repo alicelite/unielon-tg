@@ -149,7 +149,6 @@ export async function getDRC20TransferHistory(limit: number,receive_address: str
 
 export async function getAddressTokenBalances(address: string): Promise<any> {
   try {
-    console.log('getAddressTokenBalances');
     let allSummary = [];
     try {
       allSummary = await getAllSummary();

@@ -121,7 +121,8 @@ const MyItem = forwardRef<HTMLDivElement, MyItemProps>(({ account, autoNav }) =>
             </Row>
             <Row
               onClick={() => {
-                navigate('ExportPrivateKeyScreen', {state: {account} });
+                const keyring: any = Object.assign({}, account);
+                navigate('/settings/export-private-key', {state: { keyring} });
               }}
             >
               <KeyOutlined />

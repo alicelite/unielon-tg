@@ -4,7 +4,7 @@ import { Button, Column, Content, Header, Input, Layout } from '@/components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useTools } from '@/components/ActionComponent';
-import { generateAddressFromPublicKey, generatePublicKey } from '../../ui/utils/hooks';
+import { generateAddressFromPublicKey, generatePrivateKey, generatePublicKey } from '../../ui/utils/hooks';
 import { useAppDispatch } from '../../ui/state/hooks';
 import { accountActions } from '../../ui/state/accounts/reducer';
 import { useAccounts } from '../../ui/state/accounts/hooks';
@@ -22,10 +22,13 @@ export default function CreateAccountScreen() {
   const handleOnClick = async () => {
     const index = state.keyring.accounts.length;
     const pubkey = generatePublicKey(currentAccount.phrase, index);
+    const privateKey = generatePrivateKey(currentAccount.phrase, index);
+    console.log('privateKey', privateKey);
     const address = generateAddressFromPublicKey(pubkey);
     const newAccount = {
       pubkey: pubkey,
       index: index,
+      wif: privateKey,
       address,
       alianName: `Account ${index + 1}`,
       hdPath: "m/44'/3'/0'/0"

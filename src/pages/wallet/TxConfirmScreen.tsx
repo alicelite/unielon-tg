@@ -32,6 +32,7 @@ export default function TxConfirmScreen() {
       const txid = res?.boardcastCallbackFee.data.tx_hash
       if(txid) {
         tools.showLoading(false);
+        console.log(rawTxInfo, 'rawTxInfo---<1')
         const result = broadcastItem(rawTxInfo, txid)
         setBroadcastInfo(rawTxInfo.currentAccount, result)
         navigate('/tx-success', { state: {txid} });
@@ -41,15 +42,16 @@ export default function TxConfirmScreen() {
       }
     } else {
       const res = await broadcastDogeTrade(rawTxInfo.commitTx)
-    
+      console.log(res, 'res========broadcastDogeTrade')
       const txid = (res as { data: { tx_hash: string } })?.data?.tx_hash;
       if(txid) {
         tools.showLoading(false);
+        console.log(rawTxInfo, 'rawTxInfo---<2')
         const result = broadcastItem(rawTxInfo, txid)
         setBroadcastInfo(rawTxInfo.currentAccount, result)
         navigate('/tx-success', { state: {txid} });
       } else {
-        tools.toastError(res.msg);
+        tools.toastError(res.error);
         tools.showLoading(false);
       }
     }

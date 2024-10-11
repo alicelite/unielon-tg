@@ -6,6 +6,8 @@ import { accountActions } from "../state/accounts/reducer";
 import * as bitcoin from 'bitcoinjs-lib';
 import { decrypt, encrypt, generateAddress, generateChild, generateRoot } from "./wallet";
 import { keyringsActions } from "../state/keyrings/reducer";
+import * as wif from 'wif';
+
 export const decryptWallet = () => {
   return new Promise((resolve, reject) => {
     Promise.all([getLocalValue(WALLET)])
@@ -29,6 +31,23 @@ export const generatePublicKey = (phrase: string, index: number | string) => {
   const publicKey = addrNode.publicKey.toString('hex');
   return publicKey
 }
+
+export const generatePrivateKey = (phrase: string, index: number | string) => {
+  const root = generateRoot(phrase);
+  const derivePath = (index: number) => `m/44'/3'/0'/0/${index}`;
+  const addrNode = root.derivePath(derivePath(Number(index)));
+  const privateKey = addrNode.privateKey;
+  if (!privateKey) {
+    throw new Error('Private key is null');
+  }
+  const wifObject = {
+    version: network.wif,
+    privateKey: privateKey,
+    compressed: true,
+  };
+  const wifKey = wif.encode(wifObject);
+  return wifKey;
+};
 
 export const generateAddressFromPublicKey = (pubkey: string) => {
   const pubKeyBuffer = Buffer.from(pubkey, 'hex');

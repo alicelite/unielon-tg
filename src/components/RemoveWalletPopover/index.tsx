@@ -75,7 +75,8 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
               const password: any = localStorage.getItem('password');
               const encryptedWallet = encrypt(newAccounts, password);
               setLocalValue({ [WALLET]: encryptedWallet });
-              dispatch(keyringsActions.setCurrent(newAccounts[newAccounts.length - 1]))
+              console.log('newAccounts---<<<-', newAccounts);
+              dispatch(keyringsActions.setCurrent(newAccounts[newAccounts.length - 1].accounts[0]));
               dispatch(accountActions.setCurrent(newAccounts[newAccounts.length - 1]));
               dispatch(accountActions.setAccounts(newAccounts));
               onClose();
