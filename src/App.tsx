@@ -7,16 +7,17 @@ import {
   Routes,
   useNavigate,
 } from 'react-router-dom';
-// import { initViewport } from '@telegram-apps/sdk';
+import { initViewport } from '@telegram-apps/sdk';
 import routesConfig from './routes/index';
 import "./assets/style/var.less";
 import React from "react";
-// const [viewport] = initViewport();
-// const vp = await viewport;
+import { Bot } from 'grammy';
+const [viewport] = initViewport();
+const vp = await viewport;
 
-// if (!vp.isExpanded) {
-//     vp.expand();
-// }
+if (!vp.isExpanded) {
+    vp.expand();
+}
 const generateRoutes = (routes: any[]) => {
   return routes.map((route) => {
     const { path, element: Element, children } = route;
@@ -62,7 +63,17 @@ function App() {
     navigator.attach();
     return () => navigator.detach();
   }, [navigator]);
+  useEffect(() => {
+    const bot = new Bot('7147850030:AAGpitURmQfUluRlLUtB5PJTxwaAeFPGnOY');
+    bot.command('start', (ctx) => {
+      ctx.reply('Welcome to UnielonBot!');
+    });
 
+    bot.start();
+    return () => {
+      bot.stop();
+    };
+  }, []);
   return (
     <Router location={location} navigator={reactNavigator}>
       <RedirectHandler />
